@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photographers Listings | pickmyshoot</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/search.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-left">
+        <a href="index.html" class="logo">pickmy<span>shoot</span></a>
+        
+        <div class="location-selector">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Hyderabad</span>
+          <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+        </div>
+      </div>
+      
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li class="active"><a href="search.html?individuals=true">Photographers</a></li>
+        <li><a href="search.html?studios=true">Studios</a></li>
+        <li><a href="search.html?packages=true">Packages</a></li>
+      </ul>
+      
+      <div class="nav-right" id="navbar-auth-section">
+        <!-- Replaced dynamically by common.js -->
+        <button class="btn btn-primary" onclick="window.location.href='login.html'">Login / Sign Up</button>
+      </div>
+      
+      <!-- Hamburger Menu Button -->
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Breadcrumbs -->
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> &gt; 
+      <a href="search.html">Photographers</a> &gt; 
+      <span id="breadcrumb-category">Wedding Photography in Hyderabad</span>
+    </div>
+  </div>
+
+  <!-- Search Layout Section -->
+  <section class="container">
+    <div class="search-layout">
+      <!-- Left Sidebar Filters -->
+      <aside class="filter-sidebar">
+        <div class="filter-header">
+          <h3>Filters</h3>
+          <span class="clear-all-btn" id="clear-filters-btn">Clear all</span>
+        </div>
+        
+        <!-- Category filters -->
+        <div class="filter-section">
+          <h4 class="filter-title">Categories</h4>
+          <ul class="filter-list">
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="category-filter" value="Wedding Photography">
+                Wedding Photography
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="category-filter" value="Pre Wedding Shoot">
+                Pre Wedding Shoot
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="category-filter" value="Maternity Shoot">
+                Maternity Shoot
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="category-filter" value="Baby Shoot">
+                Baby Shoot
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="category-filter" value="Candid Photography">
+                Candid Photography
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="category-filter" value="Product Photography">
+                Product Photography
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Profile Type Filter -->
+        <div class="filter-section">
+          <h4 class="filter-title">Profile Type</h4>
+          <ul class="filter-list">
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="profile-type-filter" value="all" checked>
+                All Profiles
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="profile-type-filter" value="studios">
+                Premium Studios
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="profile-type-filter" value="individuals">
+                Individual Artists
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Package Tiers Filter -->
+        <div class="filter-section">
+          <h4 class="filter-title">Package Tiers</h4>
+          <ul class="filter-list">
+            <li>
+              <label class="filter-item">
+                <input type="checkbox" name="package-tier-filter" value="essential">
+                Essential (Under ₹25k)
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="checkbox" name="package-tier-filter" value="premium">
+                Premium (₹25k - ₹50k)
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="checkbox" name="package-tier-filter" value="luxury">
+                Luxury (Above ₹50k)
+              </label>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Location Filters -->
+        <div class="filter-section">
+          <h4 class="filter-title">Location</h4>
+          <div class="sidebar-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="sidebar-search-input" id="sidebar-location-search" placeholder="Search location">
+          </div>
+          <!-- Filled dynamically by js/search.js -->
+          <ul class="filter-list" id="location-checkbox-container">
+            <!-- Checkboxes will appear here -->
+          </ul>
+        </div>
+        
+        <!-- Photoshoot Date Filter -->
+        <div class="filter-section">
+          <h4 class="filter-title">Photoshoot Date</h4>
+          <div class="custom-calendar-picker" id="sidebar-calendar-picker">
+            <div class="custom-calendar-trigger" onclick="toggleCustomCalendar('sidebar-calendar-picker')">
+              <span class="calendar-selected-value">Select Date</span>
+              <i class="fa-solid fa-calendar"></i>
+            </div>
+            <div class="custom-calendar-popover">
+              <div class="calendar-header">
+                <button type="button" class="calendar-btn" onclick="changeCustomMonth(event, -1, 'sidebar-calendar-picker')">
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <span class="calendar-month-year">May 2026</span>
+                <button type="button" class="calendar-btn" onclick="changeCustomMonth(event, 1, 'sidebar-calendar-picker')">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+              <div class="calendar-weekdays">
+                <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+              </div>
+              <div class="calendar-days">
+                <!-- Generated dynamically -->
+              </div>
+            </div>
+            <input type="hidden" id="sidebar-date-picker" value="">
+          </div>
+        </div>
+        
+        <!-- Price Range Filter -->
+        <div class="filter-section">
+          <h4 class="filter-title">Price Range</h4>
+          <div class="price-slider-container">
+            <input type="range" class="price-slider" id="price-slider" min="10000" max="100000" step="5000" value="100000">
+            <div class="price-range-labels">
+              <span>₹0</span>
+              <span id="price-value" style="color: var(--primary); font-weight: 700;">₹1,00,000</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Star Rating Filters -->
+        <div class="filter-section">
+          <h4 class="filter-title">Ratings</h4>
+          <ul class="filter-list">
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="rating-filter" value="4">
+                <span class="star-rating-filter"><i class="fa-solid fa-star"></i> 4+ Stars</span>
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="rating-filter" value="3">
+                <span class="star-rating-filter"><i class="fa-solid fa-star"></i> 3+ Stars</span>
+              </label>
+            </li>
+            <li>
+              <label class="filter-item">
+                <input type="radio" name="rating-filter" value="2">
+                <span class="star-rating-filter"><i class="fa-solid fa-star"></i> 2+ Stars</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      
+      <!-- Right Main Results -->
+      <main>
+        <!-- Header tools -->
+        <div class="results-header">
+          <div class="results-title-group">
+            <h2 id="results-title-heading">Wedding Photographers in Hyderabad</h2>
+            <span class="results-count" id="results-count-label">1,250+ Photographers found</span>
+          </div>
+          
+          <div class="results-actions">
+            <!-- Sort dropdown -->
+            <select class="sort-select" id="sort-by">
+              <option value="popular">Sort by: Popular</option>
+              <option value="rating">Sort by: Top Rated</option>
+              <option value="price-asc">Sort by: Price (Low to High)</option>
+              <option value="price-desc">Sort by: Price (High to Low)</option>
+            </select>
+            
+            <button class="btn btn-secondary" style="padding: 10px 14px; font-size: 14px;" title="Grid view / Filter">
+              <i class="fa-solid fa-filter"></i> Filter
+            </button>
+          </div>
+        </div>
+        
+        <!-- Grid list of photographers -->
+        <div class="photographers-grid" id="photographers-grid-list">
+          <!-- Photographer cards will render dynamically here -->
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- Global Footer -->
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-logo">pickmy<span>shoot</span></div>
+        <p class="footer-desc">Find the perfect verified photographers for weddings, pre-weddings, baby shoots and events in India.</p>
+        <div style="display: flex; gap: 12px; font-size: 18px; color: var(--dark-500);">
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-title">For Customers</h4>
+        <ul class="footer-links">
+          <li><a href="search.html">Search Photographers</a></li>
+          <li><a href="search.html?packages=true">Photography Packages</a></li>
+          <li><a href="search.html?studios=true">Premium Studios</a></li>
+          <li><a href="#">FAQ & Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">For Photographers</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Join pickmyshoot</a></li>
+          <li><a href="photographer_dashboard.html">Photographer Dashboard</a></li>
+          <li><a href="#">Advertising</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fa-solid fa-location-dot"></i> Banjara Hills, Hyderabad, India</li>
+          <li><i class="fa-solid fa-phone"></i> +91 98765 43210</li>
+          <li><i class="fa-solid fa-envelope"></i> contact@pickmyshoot.com</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <div>&copy; 2026 pickmyshoot. All rights reserved. Built with love in Hyderabad.</div>
+      <div style="display: flex; gap: 20px;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>

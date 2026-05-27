@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | pickmyshoot</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/login.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="login-page">
+    <div class="login-card-container">
+      <div class="login-logo">pickmy<span>shoot</span></div>
+      <div class="login-subtitle">Find the perfect photographer for every moment or showcase your portfolio to receive premium customer leads.</div>
+      
+      <!-- Role Selection Cards -->
+      <div class="role-cards-wrapper">
+        <!-- User Card -->
+        <div class="role-card" id="user-role-card" onclick="selectRole('user')">
+          <div class="role-icon">
+            <i class="fa-solid fa-camera"></i>
+          </div>
+          <div class="role-title">Login as User</div>
+          <div class="role-desc">Browse photographers, customize packages, compare prices and send booking inquiries.</div>
+        </div>
+        
+        <!-- Photographer Card -->
+        <div class="role-card" id="photographer-role-card" onclick="selectRole('photographer')">
+          <div class="role-icon">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <div class="role-title">Login as Photographer</div>
+          <div class="role-desc">List your studio, manage pricing catalogs, and receive direct customer leads.</div>
+        </div>
+      </div>
+      
+      <!-- Login Form (Fades and slides in when a role is selected) -->
+      <div class="login-form-wrapper" id="login-form-wrapper">
+        <h3 id="form-heading" style="font-size: 20px; margin-bottom: 20px; font-weight: 700;">Login as User</h3>
+        <form id="login-form" onsubmit="handleLoginSubmit(event)">
+          <input type="hidden" id="selected-role-input" value="">
+          
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input class="form-input" type="email" id="email" required placeholder="e.g., example@domain.com">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-input" type="password" id="password" required placeholder="••••••••">
+          </div>
+          
+          <button type="submit" class="btn btn-primary form-submit-btn">
+            Log In <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    function selectRole(role) {
+      // Toggle card active states
+      const userCard = document.getElementById('user-role-card');
+      const photogCard = document.getElementById('photographer-role-card');
+      const formWrapper = document.getElementById('login-form-wrapper');
+      const formHeading = document.getElementById('form-heading');
+      const roleInput = document.getElementById('selected-role-input');
+      
+      userCard.classList.remove('active');
+      photogCard.classList.remove('active');
+      
+      if (role === 'user') {
+        userCard.classList.add('active');
+        formHeading.textContent = "Login as Customer User";
+        // Pre-fill demo credentials
+        document.getElementById('email').value = "customer@pickmyshoot.com";
+        document.getElementById('password').value = "password123";
+      } else {
+        photogCard.classList.add('active');
+        formHeading.textContent = "Login as Professional Photographer";
+        // Pre-fill demo credentials
+        document.getElementById('email').value = "photographer@pickmyshoot.com";
+        document.getElementById('password').value = "password123";
+      }
+      
+      roleInput.value = role;
+      formWrapper.classList.add('show');
+      
+      // Smooth scroll to the form on small screens
+      setTimeout(() => {
+        formWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 200);
+    }
+    
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const role = document.getElementById('selected-role-input').value;
+      if (!role) return;
+      
+      // Save session
+      localStorage.setItem('currentUserRole', role);
+      
+      // Route accordingly
+      if (role === 'user') {
+        window.location.href = 'index.html';
+      } else {
+        window.location.href = 'photographer_dashboard.html';
+      }
+    }
+  </script>
+</body>
+</html>

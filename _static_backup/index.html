@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pick My Shoot - Find the perfect photographer for every moment</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/home.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-left">
+        <a href="index.html" class="logo">pickmy<span>shoot</span></a>
+        
+        <div class="location-selector">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Hyderabad</span>
+          <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+        </div>
+      </div>
+      
+      <ul class="nav-links">
+        <li class="active"><a href="index.html">Home</a></li>
+        <li><a href="search.html?individuals=true">Photographers</a></li>
+        <li><a href="search.html?studios=true">Studios</a></li>
+        <li><a href="search.html?packages=true">Packages</a></li>
+      </ul>
+      
+      <div class="nav-right" id="navbar-auth-section">
+        <!-- Will be replaced dynamically by common.js based on auth state -->
+        <button class="btn btn-primary" onclick="window.location.href='login.html'">Login / Sign Up</button>
+      </div>
+      
+      <!-- Hamburger Menu Button -->
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <h1 class="hero-title">Find the perfect <br><span class="text-accent">Photographer</span> <br>for every moment</h1>
+        <p class="hero-desc">Discover and connect with verified photographers near you and capture your best memories.</p>
+        
+        <!-- Search Widget Form -->
+        <form class="search-widget" id="homepage-search-form" onsubmit="handleSearchSubmit(event)">
+          <!-- Event Field -->
+          <div class="search-field">
+            <span class="search-field-label">
+              <i class="fa-solid fa-camera-retro"></i> Event
+            </span>
+            <div class="custom-dropdown" id="homepage-event-dropdown">
+              <div class="custom-dropdown-trigger" onclick="toggleCustomDropdown('homepage-event-dropdown')">
+                <span class="dropdown-selected-value">Wedding Photography</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+              <ul class="custom-dropdown-menu">
+                <li data-value="Wedding Photography" class="selected" onclick="selectCustomDropdownOption(this, 'homepage-event-dropdown', 'search-event')">Wedding Photography</li>
+                <li data-value="Pre Wedding Shoot" onclick="selectCustomDropdownOption(this, 'homepage-event-dropdown', 'search-event')">Pre Wedding Shoot</li>
+                <li data-value="Maternity Shoot" onclick="selectCustomDropdownOption(this, 'homepage-event-dropdown', 'search-event')">Maternity Shoot</li>
+                <li data-value="Baby Shoot" onclick="selectCustomDropdownOption(this, 'homepage-event-dropdown', 'search-event')">Baby Shoot</li>
+                <li data-value="Candid Photography" onclick="selectCustomDropdownOption(this, 'homepage-event-dropdown', 'search-event')">Candid Photography</li>
+                <li data-value="Product Photography" onclick="selectCustomDropdownOption(this, 'homepage-event-dropdown', 'search-event')">Product Photography</li>
+              </ul>
+              <input type="hidden" id="search-event" value="Wedding Photography">
+            </div>
+          </div>
+          
+          <!-- Location field -->
+          <div class="search-field">
+            <span class="search-field-label">
+              <i class="fa-solid fa-location-dot"></i> Location
+            </span>
+            <input type="text" class="search-field-input" id="search-location" value="Hyderabad" placeholder="e.g. Hyderabad, Madhapur">
+          </div>
+          
+          <!-- Price Field (Slider) -->
+          <div class="search-field">
+            <span class="search-field-label">
+              <i class="fa-solid fa-indian-rupee-sign"></i> Max Price: <span id="search-price-val" style="color: var(--primary); font-weight: 700; text-transform: none;">₹1,00,000</span>
+            </span>
+            <div class="price-slider-container">
+              <input type="range" class="search-field-range" id="search-price" min="10000" max="100000" step="5000" value="100000" oninput="updateSearchPriceLabel(this.value)">
+            </div>
+          </div>
+
+          <!-- Date field -->
+          <div class="search-field">
+            <span class="search-field-label">
+              <i class="fa-solid fa-calendar-days"></i> Photoshoot Date
+            </span>
+            <div class="custom-calendar-picker" id="homepage-calendar-picker">
+              <div class="custom-calendar-trigger" onclick="toggleCustomCalendar('homepage-calendar-picker')">
+                <span class="calendar-selected-value">Select Date</span>
+                <i class="fa-solid fa-calendar"></i>
+              </div>
+              <div class="custom-calendar-popover">
+                <div class="calendar-header">
+                  <button type="button" class="calendar-btn" onclick="changeCustomMonth(event, -1, 'homepage-calendar-picker')">
+                    <i class="fa-solid fa-chevron-left"></i>
+                  </button>
+                  <span class="calendar-month-year">May 2026</span>
+                  <button type="button" class="calendar-btn" onclick="changeCustomMonth(event, 1, 'homepage-calendar-picker')">
+                    <i class="fa-solid fa-chevron-right"></i>
+                  </button>
+                </div>
+                <div class="calendar-weekdays">
+                  <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                </div>
+                <div class="calendar-days">
+                  <!-- Generated dynamically -->
+                </div>
+              </div>
+              <input type="hidden" id="search-date" value="">
+            </div>
+          </div>
+          
+          <!-- Search Submit Button -->
+          <button type="submit" class="search-submit-btn">
+            Search
+          </button>
+        </form>
+        
+        <!-- Trust Badges Row -->
+        <div class="trust-badges-row">
+          <div class="trust-badge">
+            <i class="fa-solid fa-circle-check"></i> Verified Professionals
+          </div>
+          <div class="trust-badge">
+            <i class="fa-solid fa-circle-check"></i> Free Listing for Photographers
+          </div>
+          <div class="trust-badge">
+            <i class="fa-solid fa-circle-check"></i> No Booking Fees
+          </div>
+          <div class="trust-badge">
+            <i class="fa-solid fa-circle-check"></i> Secure & Easy Booking
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bleeding Hero Image Wrapper outside .container to occupy full viewport height/width -->
+    <div class="hero-image-wrapper">
+      <img class="hero-image" src="assets/wedding_hero.png" alt="Indian Wedding Couple Photography">
+      <div class="hero-image-fade-overlay"></div>
+    </div>
+  </section>
+
+  <!-- Popular Categories Section -->
+  <section class="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Popular Categories</h2>
+        <a href="search.html" class="view-all-link">View all <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      
+      <div class="categories-grid">
+        <!-- Category 1: Wedding -->
+        <div class="category-card" onclick="goToCategory('Wedding Photography')">
+          <div class="category-image-container">
+            <img class="category-img" src="assets/wedding_hero.png" alt="Wedding Photography">
+            <button class="category-favorite-btn" onclick="handleFavClick(event, 'wedding')">
+              <i class="fa-regular fa-heart" id="fav-wedding"></i>
+            </button>
+          </div>
+          <div class="category-icon-badge">
+            <i class="fa-solid fa-ring"></i>
+          </div>
+          <div class="category-name">Wedding Photography</div>
+          <div class="category-count">12,450 Photographers</div>
+        </div>
+        
+        <!-- Category 2: Pre Wedding -->
+        <div class="category-card" onclick="goToCategory('Pre Wedding Shoot')">
+          <div class="category-image-container">
+            <img class="category-img" src="assets/prewedding_shoot.png" alt="Pre Wedding Shoot">
+            <button class="category-favorite-btn" onclick="handleFavClick(event, 'prewedding')">
+              <i class="fa-regular fa-heart" id="fav-prewedding"></i>
+            </button>
+          </div>
+          <div class="category-icon-badge">
+            <i class="fa-solid fa-camera-retro"></i>
+          </div>
+          <div class="category-name">Pre Wedding Shoot</div>
+          <div class="category-count">8,230 Photographers</div>
+        </div>
+        
+        <!-- Category 3: Maternity -->
+        <div class="category-card" onclick="goToCategory('Maternity Shoot')">
+          <div class="category-image-container">
+            <img class="category-img" src="assets/maternity_shoot.png" alt="Maternity Shoot">
+            <button class="category-favorite-btn" onclick="handleFavClick(event, 'maternity')">
+              <i class="fa-regular fa-heart" id="fav-maternity"></i>
+            </button>
+          </div>
+          <div class="category-icon-badge">
+            <i class="fa-solid fa-person-pregnant"></i>
+          </div>
+          <div class="category-name">Maternity Shoot</div>
+          <div class="category-count">3,120 Photographers</div>
+        </div>
+        
+        <!-- Category 4: Baby Shoot -->
+        <div class="category-card" onclick="goToCategory('Baby Shoot')">
+          <div class="category-image-container">
+            <img class="category-img" src="assets/baby_shoot.png" alt="Baby Shoot">
+            <button class="category-favorite-btn" onclick="handleFavClick(event, 'baby')">
+              <i class="fa-regular fa-heart" id="fav-baby"></i>
+            </button>
+          </div>
+          <div class="category-icon-badge">
+            <i class="fa-solid fa-baby"></i>
+          </div>
+          <div class="category-name">Baby Shoot</div>
+          <div class="category-count">4,560 Photographers</div>
+        </div>
+        
+        <!-- Category 5: Candid -->
+        <div class="category-card" onclick="goToCategory('Candid Photography')">
+          <div class="category-image-container">
+            <img class="category-img" src="assets/candid_shoot.png" alt="Candid Photography">
+            <button class="category-favorite-btn" onclick="handleFavClick(event, 'candid')">
+              <i class="fa-regular fa-heart" id="fav-candid"></i>
+            </button>
+          </div>
+          <div class="category-icon-badge">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="category-name">Candid Photography</div>
+          <div class="category-count">6,780 Photographers</div>
+        </div>
+        
+        <!-- Category 6: Product -->
+        <div class="category-card" onclick="goToCategory('Product Photography')">
+          <div class="category-image-container">
+            <img class="category-img" src="assets/product_shoot.png" alt="Product Photography">
+            <button class="category-favorite-btn" onclick="handleFavClick(event, 'product')">
+              <i class="fa-regular fa-heart" id="fav-product"></i>
+            </button>
+          </div>
+          <div class="category-icon-badge">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <div class="category-name">Product Photography</div>
+          <div class="category-count">2,340 Photographers</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <div class="section-header text-center" style="flex-direction: column; gap: 8px; margin-bottom: 50px; display: flex; align-items: center;">
+        <h2 class="section-title">How pickmyshoot Works</h2>
+        <p style="color: var(--dark-500); font-size: 14px; max-width: 600px; margin: 0 auto;">Three simple steps to finding and booking the perfect photographer for your special moments.</p>
+      </div>
+      
+      <div class="how-it-works-grid">
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+          <h3 class="step-title">Choose Location & Style</h3>
+          <p class="step-desc">Select your city and choose the photography style or category that fits your needs (e.g., Wedding, Pre-Wedding, Baby Shoot).</p>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon"><i class="fa-solid fa-images"></i></div>
+          <h3 class="step-title">Compare Portfolios & Prices</h3>
+          <p class="step-desc">Browse through verified profiles, compare pricing packages, read real reviews, and check high-resolution portfolios.</p>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon"><i class="fa-solid fa-calendar-check"></i></div>
+          <h3 class="step-title">Connect & Book Directly</h3>
+          <p class="step-desc">Inquire directly with photographers, chat via simulated WhatsApp, or call. Book them directly with zero platform booking fees.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Photographers Section -->
+  <section class="featured-photographers-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Photographers</h2>
+        <a href="search.html" class="view-all-link">View all listings <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      
+      <div class="featured-grid">
+        <!-- Photographer 1: The Wedding Story -->
+        <div class="featured-card" onclick="window.location.href='profile.html?id=the-wedding-story'">
+          <div class="featured-card-img-wrapper">
+            <img src="assets/wedding_hero.png" alt="The Wedding Story" class="featured-card-img">
+            <span class="featured-badge">Top Rated</span>
+          </div>
+          <div class="featured-card-body">
+            <div class="featured-card-header">
+              <div class="featured-avatar" style="background-color: #000000;">TWS</div>
+              <div>
+                <h3 class="featured-name">The Wedding Story <i class="fa-solid fa-circle-check text-accent" style="color: #2196f3 !important; font-size: 13px;"></i></h3>
+                <span class="featured-rating"><i class="fa-solid fa-star" style="color: #ffb400;"></i> 4.9 (320 Reviews)</span>
+              </div>
+            </div>
+            <p class="featured-desc">Passionate photography team capturing authentic, beautiful candids and cinematic films.</p>
+            <div class="featured-footer">
+              <span class="featured-price">Starts at <strong>₹25,000</strong></span>
+              <span class="featured-location"><i class="fa-solid fa-location-dot"></i> Banjara Hills</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photographer 2: Karthik Rao -->
+        <div class="featured-card" onclick="window.location.href='profile.html?id=clicks-by-karthik&tab=about'">
+          <div class="featured-card-img-wrapper">
+            <img src="assets/prewedding_shoot.png" alt="Clicks by Karthik" class="featured-card-img">
+            <span class="featured-badge">Popular</span>
+          </div>
+          <div class="featured-card-body">
+            <div class="featured-card-header">
+              <div class="featured-avatar" style="background-color: #ff9800;">KR</div>
+              <div>
+                <h3 class="featured-name">Karthik Rao</h3>
+                <span class="featured-rating"><i class="fa-solid fa-star" style="color: #ffb400;"></i> 4.8 (210 Reviews)</span>
+              </div>
+            </div>
+            <p class="featured-desc">Creative cinematic lenses capturing your grand memories and premium drone shoots.</p>
+            <div class="featured-footer">
+              <span class="featured-price">Hourly Rate: <strong>₹2,500/hr</strong></span>
+              <span class="featured-location"><i class="fa-solid fa-location-dot"></i> Jubilee Hills</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photographer 3: Rahul Verma -->
+        <div class="featured-card" onclick="window.location.href='profile.html?id=rahul-verma&tab=about'">
+          <div class="featured-card-img-wrapper">
+            <img src="assets/candid_shoot.png" alt="Rahul Verma" class="featured-card-img">
+            <span class="featured-badge">Verified</span>
+          </div>
+          <div class="featured-card-body">
+            <div class="featured-card-header">
+              <div class="featured-avatar" style="background-color: #2196f3;">RV</div>
+              <div>
+                <h3 class="featured-name">Rahul Verma <i class="fa-solid fa-circle-check text-accent" style="color: #2196f3 !important; font-size: 13px;"></i></h3>
+                <span class="featured-rating"><i class="fa-solid fa-star" style="color: #ffb400;"></i> 4.9 (180 Reviews)</span>
+              </div>
+            </div>
+            <p class="featured-desc">Narrative photo books and custom color-graded frames that document a deep emotional story.</p>
+            <div class="featured-footer">
+              <span class="featured-price">Hourly Rate: <strong>₹2,200/hr</strong></span>
+              <span class="featured-location"><i class="fa-solid fa-location-dot"></i> Madhapur</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section class="why-choose-us-section">
+    <div class="container">
+      <div class="why-choose-us-grid">
+        <div class="why-choose-us-content">
+          <h2 class="section-title" style="font-size: 32px; margin-bottom: 20px;">Why Book Through pickmyshoot?</h2>
+          <p style="color: var(--dark-500); margin-bottom: 30px; font-size: 15px; line-height: 1.7;">We connect you directly with the best photographers in the industry. No agents, no middlemen, and absolutely transparent details.</p>
+          
+          <div class="benefits-list">
+            <div class="benefit-item">
+              <div class="benefit-icon"><i class="fa-solid fa-circle-check"></i></div>
+              <div>
+                <h4>100% Handpicked & Verified Artists</h4>
+                <p>We verify identities, portfolio authenticity, and business details before listing any artist.</p>
+              </div>
+            </div>
+            
+            <div class="benefit-item">
+              <div class="benefit-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
+              <div>
+                <h4>Zero Commissions & Direct Booking</h4>
+                <p>Chat directly and pay them directly. We don't charge booking fees or commissions from you.</p>
+              </div>
+            </div>
+            
+            <div class="benefit-item">
+              <div class="benefit-icon"><i class="fa-solid fa-shield-halved"></i></div>
+              <div>
+                <h4>Transparent Package Catalogs</h4>
+                <p>Compare full breakdowns of Essential, Premium, and Luxury packages instantly before calling.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="why-choose-us-image-wrapper">
+          <img src="assets/maternity_shoot.png" alt="Photography Session Maternity" class="why-choose-us-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Footer -->
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-logo">pickmy<span>shoot</span></div>
+        <p class="footer-desc">Find the perfect verified photographers for weddings, pre-weddings, baby shoots and events in India.</p>
+        <div style="display: flex; gap: 12px; font-size: 18px; color: var(--dark-500);">
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-title">For Customers</h4>
+        <ul class="footer-links">
+          <li><a href="search.html">Search Photographers</a></li>
+          <li><a href="search.html?packages=true">Photography Packages</a></li>
+          <li><a href="search.html?studios=true">Premium Studios</a></li>
+          <li><a href="#">FAQ & Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">For Photographers</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Join pickmyshoot</a></li>
+          <li><a href="photographer_dashboard.html">Photographer Dashboard</a></li>
+          <li><a href="#">Advertising</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fa-solid fa-location-dot"></i> Banjara Hills, Hyderabad, India</li>
+          <li><i class="fa-solid fa-phone"></i> +91 98765 43210</li>
+          <li><i class="fa-solid fa-envelope"></i> contact@pickmyshoot.com</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <div>&copy; 2026 pickmyshoot. All rights reserved. Built with love in Hyderabad.</div>
+      <div style="display: flex; gap: 20px;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script>
+    // Update price value display on input
+    function updateSearchPriceLabel(val) {
+      const formattedVal = parseInt(val).toLocaleString('en-IN');
+      document.getElementById('search-price-val').textContent = `₹${formattedVal}`;
+    }
+
+    // Initialize widgets on load
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date();
+      const picker = document.getElementById('homepage-calendar-picker');
+      if (picker) {
+        picker.dataset.currentMonth = today.getMonth();
+        picker.dataset.currentYear = today.getFullYear();
+        renderCustomCalendar('homepage-calendar-picker');
+      }
+    });
+
+    // Search form submission handler
+    function handleSearchSubmit(event) {
+      event.preventDefault();
+      const eventVal = document.getElementById('search-event').value;
+      const location = document.getElementById('search-location').value;
+      const maxPrice = document.getElementById('search-price').value;
+      const date = document.getElementById('search-date').value;
+      
+      // Redirect to search.html with query parameters
+      const url = `search.html?category=${encodeURIComponent(eventVal)}&location=${encodeURIComponent(location)}&maxPrice=${encodeURIComponent(maxPrice)}&date=${encodeURIComponent(date)}`;
+      window.location.href = url;
+    }
+    
+    // Quick Category search redirect
+    function goToCategory(categoryName) {
+      window.location.href = `search.html?category=${encodeURIComponent(categoryName)}&location=Hyderabad`;
+    }
+    
+    // Handle card favorites toggle (without triggering details page redirect)
+    function handleFavClick(event, categoryId) {
+      event.stopPropagation();
+      const icon = document.getElementById(`fav-${categoryId}`);
+      
+      icon.classList.toggle('fa-regular');
+      icon.classList.toggle('fa-solid');
+      icon.classList.toggle('text-accent');
+      
+      // Simulate state saving for categories
+      const isFav = icon.classList.contains('fa-solid');
+      console.log(`Category ${categoryId} favorite state: ${isFav}`);
+    }
+  </script>
+</body>
+</html>

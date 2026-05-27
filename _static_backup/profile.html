@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photographer Profile | pickmyshoot</title>
+  <link class="profile-meta-style" rel="stylesheet" href="css/main.css">
+  <link class="profile-meta-style" rel="stylesheet" href="css/profile.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-left">
+        <a href="index.html" class="logo">pickmy<span>shoot</span></a>
+        
+        <div class="location-selector">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Hyderabad</span>
+          <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+        </div>
+      </div>
+      
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li class="active"><a href="search.html?individuals=true">Photographers</a></li>
+        <li><a href="search.html?studios=true">Studios</a></li>
+        <li><a href="search.html?packages=true">Packages</a></li>
+      </ul>
+      
+      <div class="nav-right" id="navbar-auth-section">
+        <!-- Replaced dynamically by common.js -->
+        <button class="btn btn-primary" onclick="window.location.href='login.html'">Login / Sign Up</button>
+      </div>
+      
+      <!-- Hamburger Menu Button -->
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Profile Navigation and Actions Toolbar -->
+  <section class="container mt-4">
+    <div class="profile-actions-bar">
+      <!-- Back button -->
+      <a href="search.html" class="profile-action-btn" id="profile-back-to-listings">
+        <i class="fa-solid fa-arrow-left"></i> Back to listings
+      </a>
+      
+      <!-- Share / Save tools -->
+      <div class="profile-actions-right">
+        <span class="profile-action-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!');" title="Copy profile URL">
+          <i class="fa-solid fa-share-nodes"></i> Share
+        </span>
+        <!-- Heart Save (State is toggled inside image favorite toggle button in gallery) -->
+        <span class="profile-action-btn" onclick="document.querySelector('.gallery-fav-btn').click();" title="Save profile to favorites">
+          <i class="fa-regular fa-heart"></i> Save
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Photo Gallery Grid -->
+  <section class="container">
+    <div class="gallery-grid" id="profile-gallery-grid">
+      <!-- Gallery content will be injected dynamically by js/profile.js -->
+    </div>
+  </section>
+
+  <!-- Profile Metadata Header -->
+  <section class="container">
+    <div class="profile-meta-block">
+      <div class="profile-meta-left">
+        <!-- Circular avatar profile logo -->
+        <div class="profile-avatar-lg" id="profile-avatar">TWS</div>
+        
+        <div class="profile-title-details">
+          <h1 id="profile-name">The Wedding Story <i class="fa-solid fa-circle-check" title="Verified Professional"></i></h1>
+          
+          <div class="profile-subtitle-line" id="profile-meta-line">
+            <span><i class="fa-solid fa-star"></i> 4.9 (320 Reviews)</span>
+            <span>•</span>
+            <span>8+ Years Experience</span>
+          </div>
+          
+          <div class="profile-location-line" id="profile-location-line">
+            <i class="fa-solid fa-location-dot"></i> Banjara Hills, Hyderabad
+          </div>
+        </div>
+      </div>
+      
+      <!-- Primary CTA buttons -->
+      <div class="profile-meta-right">
+        <!-- Send Inquiry triggers modal -->
+        <button class="btn btn-primary open-inquiry-modal-btn" onclick="openInquiryModal()">
+          Send Inquiry <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <!-- Chat on WhatsApp triggers floating panel -->
+        <button class="btn btn-whatsapp" id="whatsapp-trigger-btn">
+          <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs Bar -->
+  <section class="container">
+    <div class="profile-tabs-bar">
+      <div class="profile-tab active" data-tab="about">About</div>
+      <div class="profile-tab" data-tab="packages">Packages</div>
+      <div class="profile-tab" data-tab="portfolio">Portfolio</div>
+      <div class="profile-tab" data-tab="reviews">Reviews</div>
+      <div class="profile-tab" data-tab="faq">FAQ</div>
+    </div>
+  </section>
+
+  <!-- Tab Content Sections (Populated via JS) -->
+  <section class="container" id="tab-view-content">
+    <!-- Content swaps here dynamically -->
+  </section>
+
+  <!-- Send Inquiry Modal Overlay -->
+  <div class="modal-overlay" id="inquiry-modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="inquiry-modal-close"><i class="fa-solid fa-xmark"></i></button>
+      <h3 id="inquiry-modal-heading" style="font-size: 20px; margin-bottom: 8px;">Send Inquiry to The Wedding Story</h3>
+      <p style="font-size: 13px; color: var(--dark-500); margin-bottom: 24px;">Please fill in your details. The photographer will contact you within 24 hours.</p>
+      
+      <form id="inquiry-form">
+        <!-- Client Name -->
+        <div class="form-group">
+          <label class="form-label" for="client-name">Your Full Name</label>
+          <input type="text" class="form-input" id="client-name" required placeholder="e.g., Harish Kumar">
+        </div>
+        
+        <!-- Phone number -->
+        <div class="form-group">
+          <label class="form-label" for="client-phone">Phone Number</label>
+          <input type="tel" class="form-input" id="client-phone" required placeholder="e.g., +91 98765 43210">
+        </div>
+        
+        <!-- Event Date -->
+        <div class="form-group">
+          <label class="form-label" for="event-date">Event Date</label>
+          <input type="date" class="form-input" id="event-date" required>
+        </div>
+        
+        <!-- Shoot Category -->
+        <div class="form-group">
+          <label class="form-label" for="event-type">Event Category</label>
+          <select class="form-input" id="event-type" style="cursor: pointer;">
+            <option value="Wedding Photography">Wedding Photography</option>
+            <option value="Pre Wedding Shoot">Pre Wedding Shoot</option>
+            <option value="Maternity Shoot">Maternity Shoot</option>
+            <option value="Baby Shoot">Baby Shoot</option>
+            <option value="Candid Photography">Candid Photography</option>
+            <option value="Product Photography">Product Photography</option>
+          </select>
+        </div>
+        
+        <!-- Message -->
+        <div class="form-group">
+          <label class="form-label" for="client-msg">Details / Message</label>
+          <textarea class="form-input" id="client-msg" rows="3" placeholder="Describe your shoot timeline, location venue, or custom package queries..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary form-submit-btn" style="width: 100%;">
+          Submit Inquiry
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Simulated WhatsApp Chat Box Widget -->
+  <div class="whatsapp-chat-container" id="whatsapp-chat-panel">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-avatar" id="chat-avatar-text">TWS</div>
+        <div class="chat-title-status">
+          <span class="chat-name" id="chat-header-name">The Wedding Story</span>
+          <span class="chat-status">Online</span>
+        </div>
+      </div>
+      <button class="chat-close-btn" id="chat-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <!-- Chat log wrapper -->
+    <div class="chat-body" id="chat-body-messages">
+      <!-- Dynamic messages bubbles loaded in js/profile.js -->
+    </div>
+    
+    <div class="chat-footer">
+      <input type="text" class="chat-input" id="chat-msg-input" placeholder="Type a message...">
+      <button class="chat-send-btn" id="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Global Footer -->
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-logo">pickmy<span>shoot</span></div>
+        <p class="footer-desc">Find the perfect verified photographers for weddings, pre-weddings, baby shoots and events in India.</p>
+        <div style="display: flex; gap: 12px; font-size: 18px; color: var(--dark-500);">
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" style="color: inherit;"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-title">For Customers</h4>
+        <ul class="footer-links">
+          <li><a href="search.html">Search Photographers</a></li>
+          <li><a href="search.html?packages=true">Photography Packages</a></li>
+          <li><a href="search.html?studios=true">Premium Studios</a></li>
+          <li><a href="#">FAQ & Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">For Photographers</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Join pickmyshoot</a></li>
+          <li><a href="photographer_dashboard.html">Photographer Dashboard</a></li>
+          <li><a href="#">Advertising</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fa-solid fa-location-dot"></i> Banjara Hills, Hyderabad, India</li>
+          <li><i class="fa-solid fa-phone"></i> +91 98765 43210</li>
+          <li><i class="fa-solid fa-envelope"></i> contact@pickmyshoot.com</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <div>&copy; 2026 pickmyshoot. All rights reserved. Built with love in Hyderabad.</div>
+      <div style="display: flex; gap: 20px;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
