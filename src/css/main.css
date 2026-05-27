@@ -63,7 +63,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--dark-900);
+  color: var(--font-serif);
   font-weight: 700;
 }
 
@@ -72,6 +72,15 @@ a {
   text-decoration: none;
   transition: var(--transition-fast);
 }
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+
 
 /* Shared Layout Containers */
 .container {
@@ -161,6 +170,8 @@ a {
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
+  font-family: var(--font-sans);
+  font-weight: 500;
 }
 
 /* Navbar specific container overrides to match thepatternscompany.com Bootstrap layout exactly */
@@ -715,4 +726,16 @@ input[type="date"].form-input {
     top: 16px;
     right: 16px;
   }
+}
+
+
+
+
+
+.search-form label,
+.search-form input,
+.search-form select {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 500;
 }
