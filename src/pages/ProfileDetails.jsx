@@ -123,35 +123,7 @@ export default function ProfileDetails() {
         </div>
       </section>
 
-      {/* Hero Photo Gallery Grid (Studio only) */}
-      {photographer.isStudio && (
-        <section className="container">
-          <div className="gallery-grid" id="profile-gallery-grid" style={{ display: 'grid' }}>
-            <div className="gallery-left">
-              <img src={gallery[0] || '/assets/wedding_hero.png'} alt={`${photographer.name} Main Photo`} />
-              <button 
-                className={`gallery-fav-btn ${isSaved ? 'active' : ''}`} 
-                onClick={handleProfileFavToggle}
-                title="Save to favorites"
-              >
-                <i className={`${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart`}></i>
-              </button>
-            </div>
-            <div className="gallery-right">
-              <div className="gallery-thumb"><img src={gallery[1] || '/assets/prewedding_shoot.png'} alt="Portfolio Thumbnail 1" /></div>
-              <div className="gallery-thumb"><img src={gallery[2] || '/assets/candid_shoot.png'} alt="Portfolio Thumbnail 2" /></div>
-              <div className="gallery-thumb"><img src={gallery[3] || '/assets/maternity_shoot.png'} alt="Portfolio Thumbnail 3" /></div>
-              <div className="gallery-thumb">
-                <img src={gallery[4] || '/assets/baby_shoot.png'} alt="Portfolio Thumbnail 4" />
-                <div className="gallery-overlay" onClick={handleViewGalleryClick}>
-                  <span className="gallery-overlay-count">+25</span>
-                  <span>View Gallery</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+
 
       {/* Profile Metadata Header */}
       <section className="container">
@@ -271,17 +243,19 @@ export default function ProfileDetails() {
                 ))}
               </ul>
               
-              {/* Portfolio Showcase embedded inside About for non-studios, or as works-section for studios too */}
-              <div className="works-section">
-                <h3 className="works-title">Portfolio Showcase</h3>
-                <div className="works-grid">
-                  {gallery.map((img, i) => (
-                    <div key={i} className="works-item">
-                      <img src={img} alt={`Portfolio Showcase ${i + 1}`} />
-                    </div>
-                  ))}
+              {/* Portfolio Showcase embedded inside About for non-studios */}
+              {!photographer.isStudio && (
+                <div className="works-section">
+                  <h3 className="works-title">Portfolio Showcase</h3>
+                  <div className="works-grid">
+                    {gallery.map((img, i) => (
+                      <div key={i} className="works-item">
+                        <img src={img} alt={`Portfolio Showcase ${i + 1}`} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Bottom Packages block for Studio profiles only */}
