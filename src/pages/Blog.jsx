@@ -39,7 +39,7 @@ const BLOG_POSTS = [
     authorColor: '#0ea5e9',
     date: 'May 10, 2026',
     readTime: '6 min read',
-    image: 'https://images.unsplash.com/photo-1578593542783-c5f26ade20c1?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&q=80',
     featured: false,
   },
   {
@@ -105,10 +105,27 @@ export default function Blog() {
       {/* Hero Section */}
       <div className="blog-hero">
         <div className="container">
-          <div className="blog-hero-inner">
-            <span className="blog-hero-tag">Our Blog</span>
-            <h1 className="blog-hero-title">Photography Insights & Inspiration</h1>
-            <p className="blog-hero-sub">Tips, guides, and stories from professional photographers across Hyderabad.</p>
+          <div className="blog-hero-layout">
+            <div className="blog-hero-inner">
+              <span className="blog-hero-tag">Our Blogs</span>
+              <h1 className="blog-hero-title">Photography Insights &amp; Inspiration</h1>
+              <p className="blog-hero-sub">Tips, guides, and stories from professional photographers across Hyderabad.</p>
+              <div className="blog-hero-stats">
+                <div className="blog-hero-stat"><strong>6+</strong><span>Articles</span></div>
+                <div className="blog-hero-stat-divider"></div>
+                <div className="blog-hero-stat"><strong>5</strong><span>Categories</span></div>
+                <div className="blog-hero-stat-divider"></div>
+                <div className="blog-hero-stat"><strong>Weekly</strong><span>Updates</span></div>
+              </div>
+            </div>
+            <div className="blog-hero-cover">
+              <img
+                src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&q=80"
+                alt="Photography blog cover"
+                className="blog-hero-cover-img"
+              />
+              <div className="blog-hero-cover-overlay"></div>
+            </div>
           </div>
         </div>
       </div>

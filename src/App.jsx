@@ -87,7 +87,7 @@ export default function App() {
           } />
 
           {/* Blog Route */}
-          <Route path="/blog" element={
+          <Route path="/blogs" element={
             <ProtectedRoute>
               <MainLayout>
                 <Blog />
