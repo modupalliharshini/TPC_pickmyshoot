@@ -389,6 +389,19 @@ footer {
 }
 
 /* Modern Form & Input System */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 .form-group {
   text-align: left;
   margin-bottom: 20px;
@@ -491,6 +504,12 @@ input[type="date"].form-input {
   position: relative;
   transform: translateY(-20px);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Scrollable Modal fixes */
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--light-300) transparent;
 }
 
 .modal-overlay.show .modal-content {
@@ -626,5 +645,18 @@ input[type="date"].form-input {
     flex-direction: column;
     gap: 16px;
     text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-content {
+    padding: 28px 20px;
+    max-width: calc(100% - 16px);
+    margin: 8px;
+    border-radius: var(--radius-md);
+  }
+  .modal-close {
+    top: 16px;
+    right: 16px;
   }
 }

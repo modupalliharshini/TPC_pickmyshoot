@@ -88,36 +88,38 @@ export default function InquiryModal({ isOpen, onClose, photographer }) {
             />
           </div>
           
-          {/* Event Date */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="event-date">Event Date</label>
-            <input 
-              type="date" 
-              className="form-input" 
-              id="event-date" 
-              required
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-          
-          {/* Shoot Category */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="event-type">Event Category</label>
-            <select 
-              className="form-input" 
-              id="event-type" 
-              style={{ cursor: 'pointer' }}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="Wedding Photography">Wedding Photography</option>
-              <option value="Pre Wedding Shoot">Pre Wedding Shoot</option>
-              <option value="Maternity Shoot">Maternity Shoot</option>
-              <option value="Baby Shoot">Baby Shoot</option>
-              <option value="Candid Photography">Candid Photography</option>
-              <option value="Product Photography">Product Photography</option>
-            </select>
+          <div className="form-row">
+            {/* Event Date */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="event-date">Event Date</label>
+              <input 
+                type="date" 
+                className="form-input" 
+                id="event-date" 
+                required
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            
+            {/* Shoot Category */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="event-type">Event Category</label>
+              <select 
+                className="form-input" 
+                id="event-type" 
+                style={{ cursor: 'pointer' }}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="Wedding Photography">Wedding Photography</option>
+                <option value="Pre Wedding Shoot">Pre Wedding Shoot</option>
+                <option value="Maternity Shoot">Maternity Shoot</option>
+                <option value="Baby Shoot">Baby Shoot</option>
+                <option value="Candid Photography">Candid Photography</option>
+                <option value="Product Photography">Product Photography</option>
+              </select>
+            </div>
           </div>
           
           {/* Message */}

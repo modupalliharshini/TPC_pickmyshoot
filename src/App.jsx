@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext'; // Wait, let's make sure it imports the correct path. Path is context/AuthContext.
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -44,10 +44,29 @@ function MainLayout({ children }) {
   );
 }
 
+// Scroll to top on page navigation
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+  const prevPathname = React.useRef(pathname);
+
+  React.useEffect(() => {
+    const isProfilePage = pathname.startsWith('/profile/');
+    const pathChanged = pathname !== prevPathname.current;
+    prevPathname.current = pathname;
+
+    if (pathChanged || !isProfilePage) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, search]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Public Login Route */}
           <Route path="/login" element={<Login />} />
