@@ -35,7 +35,9 @@ export const PHOTOGRAPHERS = [
       essential: { price: 25000, hours: 6, photographers: 1 },
       premium: { price: 45000, hours: 12, photographers: 2, popular: true },
       luxury: { price: 75000, hours: 16, photographers: 3 }
-    }
+    },
+    languages: ["English", "Hindi"],
+    travelOutsideCity: true
   },
   {
     id: "clicks-by-karthik",
@@ -46,7 +48,7 @@ export const PHOTOGRAPHERS = [
     price: 18000,
     location: "Jubilee Hills",
     city: "Hyderabad",
-    categories: ["Wedding Photography", "Pre Wedding Shoot", "Candid Photography"],
+    categories: ["Wedding Photography", "Pre Wedding Shoot", "Candid Photography", "Product Photography"],
     image: "/assets/karthik_profile.png",
     gallery: [
       "/assets/prewedding_shoot.png",
@@ -73,7 +75,9 @@ export const PHOTOGRAPHERS = [
       essential: { price: 18000, hours: 6, photographers: 1 },
       premium: { price: 32000, hours: 10, photographers: 2, popular: true },
       luxury: { price: 55000, hours: 14, photographers: 3 }
-    }
+    },
+    languages: ["English", "Telugu", "Hindi"],
+    travelOutsideCity: true
   },
   {
     id: "rahul-verma",
@@ -84,7 +88,7 @@ export const PHOTOGRAPHERS = [
     price: 22000,
     location: "Madhapur",
     city: "Hyderabad",
-    categories: ["Wedding Photography", "Pre Wedding Shoot", "Candid Photography"],
+    categories: ["Wedding Photography", "Pre Wedding Shoot", "Candid Photography", "Baby Shoot"],
     image: "/assets/rahul_profile.png",
     gallery: [
       "/assets/candid_shoot.png",
@@ -111,18 +115,20 @@ export const PHOTOGRAPHERS = [
       essential: { price: 22000, hours: 6, photographers: 1 },
       premium: { price: 40000, hours: 12, photographers: 2, popular: true },
       luxury: { price: 68000, hours: 15, photographers: 3 }
-    }
+    },
+    languages: ["English", "Hindi"],
+    travelOutsideCity: false
   },
   {
     id: "akhil-reddy",
     name: "Akhil Reddy",
     rating: 4.8,
     reviews: 160,
-    experience: 6,
+    experience: 2, // Modified to test the 1-3 years filter!
     price: 20000,
     location: "Gachibowli",
     city: "Hyderabad",
-    categories: ["Wedding Photography", "Maternity Shoot", "Candid Photography"],
+    categories: ["Wedding Photography", "Maternity Shoot", "Candid Photography", "Corporate"],
     image: "/assets/akhil_profile.png",
     gallery: [
       "/assets/maternity_shoot.png",
@@ -140,7 +146,7 @@ export const PHOTOGRAPHERS = [
     about: "I am Akhil Reddy, renowned for fine-art maternity and grand wedding celebrations. I turn normal settings into magical visual highlights.",
     bullets: [
       "150+ Maternity Shoots",
-      "6+ Years Experience",
+      "2+ Years Experience",
       "Dedicated Studio Setup",
       "Custom Outfits Available"
     ],
@@ -148,14 +154,16 @@ export const PHOTOGRAPHERS = [
       essential: { price: 20000, hours: 5, photographers: 1 },
       premium: { price: 38000, hours: 10, photographers: 2, popular: true },
       luxury: { price: 60000, hours: 14, photographers: 3 }
-    }
+    },
+    languages: ["Telugu", "Hindi"],
+    travelOutsideCity: true
   },
   {
     id: "foto-perfect",
     name: "Foto Perfect Studio",
     rating: 4.7,
     reviews: 140,
-    experience: 5,
+    experience: 4, // Fits 3-5 years filter!
     price: 15000,
     location: "Kukatpally",
     city: "Hyderabad",
@@ -175,7 +183,7 @@ export const PHOTOGRAPHERS = [
     about: "Foto Perfect Studio specializes in capturing the pure innocence of babies and the grand warmth of family occasions. Affordable packages with absolute perfection.",
     bullets: [
       "200+ Baby & Kids Shoots",
-      "5+ Years Experience",
+      "4+ Years Experience",
       "Baby Props Provided",
       "Warm Sanitized Studio"
     ],
@@ -183,7 +191,9 @@ export const PHOTOGRAPHERS = [
       essential: { price: 15000, hours: 4, photographers: 1 },
       premium: { price: 28000, hours: 8, photographers: 2, popular: true },
       luxury: { price: 45000, hours: 12, photographers: 2 }
-    }
+    },
+    languages: ["English", "Telugu"],
+    travelOutsideCity: false
   },
   {
     id: "pixel-capture",
@@ -218,6 +228,8 @@ export const PHOTOGRAPHERS = [
       essential: { price: 19000, hours: 6, photographers: 1 },
       premium: { price: 35000, hours: 12, photographers: 2, popular: true },
       luxury: { price: 58000, hours: 16, photographers: 3 }
-    }
+    },
+    languages: ["English", "Hindi"],
+    travelOutsideCity: true
   }
 ];

@@ -29,6 +29,20 @@ export default function SearchListings() {
 
   // Wishlist only trigger
   const [onlyWishlist, setOnlyWishlist] = useState(false);
+  const [selectedExperiences, setSelectedExperiences] = useState([]);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [travelOutsideOnly, setTravelOutsideOnly] = useState(false);
+
+  const [collapsedSections, setCollapsedSections] = useState({
+    experience: false,
+    rate: false,
+    languages: false,
+    date: false,
+  });
+
+  const toggleSection = (section) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   // Synchronize initial query params on mount/change
   useEffect(() => {
@@ -44,7 +58,8 @@ export default function SearchListings() {
       setSelectedLocations(['Hyderabad']);
     }
 
-    setMaxPrice(params.get('maxPrice') ? parseInt(params.get('maxPrice')) : 100000);
+    const isIndiv = params.get('individuals') === 'true';
+    setMaxPrice(params.get('maxPrice') ? parseInt(params.get('maxPrice')) : (isIndiv ? 5000 : 100000));
     setDate(params.get('date') || '');
     setOnlyWishlist(params.get('wishlist') === 'true');
 
@@ -85,19 +100,57 @@ export default function SearchListings() {
     }
   };
 
+  // Handle experiences checkboxes toggles
+  const handleExperienceToggle = (range) => {
+    if (selectedExperiences.includes(range)) {
+      setSelectedExperiences(prev => prev.filter(r => r !== range));
+    } else {
+      setSelectedExperiences(prev => [...prev, range]);
+    }
+  };
+
+  // Handle languages checkboxes toggles
+  const handleLanguageToggle = (lang) => {
+    if (selectedLanguages.includes(lang)) {
+      setSelectedLanguages(prev => prev.filter(l => l !== lang));
+    } else {
+      setSelectedLanguages(prev => [...prev, lang]);
+    }
+  };
+
   // Clear all filters
   const handleClearFilters = () => {
     setSelectedCategory('');
-    setSelectedProfileType('all');
     setSelectedPackageTiers([]);
     setSelectedLocations(['Hyderabad']);
     setDate('');
-    setMaxPrice(100000);
     setMinRating(0);
     setSortKey('popular');
     setSearchQuery('');
     setOnlyWishlist(false);
-    navigate('/search');
+    setSelectedExperiences([]);
+    setSelectedLanguages([]);
+    setTravelOutsideOnly(false);
+    
+    const params = new URLSearchParams(location.search);
+    const hasIndividuals = params.get('individuals') === 'true';
+    const hasStudios = params.get('studios') === 'true';
+    const hasPackages = params.get('packages') === 'true';
+    
+    if (hasIndividuals) {
+      setMaxPrice(5000);
+      navigate('/search?individuals=true');
+    } else if (hasStudios) {
+      setMaxPrice(100000);
+      navigate('/search?studios=true');
+    } else if (hasPackages) {
+      setMaxPrice(100000);
+      navigate('/search?packages=true');
+    } else {
+      setSelectedProfileType('all');
+      setMaxPrice(100000);
+      navigate('/search');
+    }
   };
 
   // Toggle favorite on listing card
@@ -122,7 +175,18 @@ export default function SearchListings() {
     if (onlyWishlist && !favorites.includes(p.id)) return false;
     
     // 2. Category filter
-    if (selectedCategory && !p.categories.includes(selectedCategory)) return false;
+    if (selectedCategory) {
+      const categoryMap = {
+        'Wedding': 'Wedding Photography',
+        'Pre-Wedding': 'Pre Wedding Shoot',
+        'Maternity': 'Maternity Shoot',
+        'Baby': 'Baby Shoot',
+        'Product': 'Product Photography',
+        'Corporate': 'Corporate'
+      };
+      const mappedDbCategory = categoryMap[selectedCategory] || selectedCategory;
+      if (!p.categories.includes(mappedDbCategory)) return false;
+    }
     
     // 3. Location filter
     if (selectedLocations.length > 0) {
@@ -134,7 +198,16 @@ export default function SearchListings() {
     }
     
     // 4. Max Price filter
-    if (p.price > maxPrice) return false;
+    if (p.isStudio) {
+      if (p.price > maxPrice) return false;
+    } else {
+      const isIndivMode = selectedProfileType === 'individuals';
+      if (isIndivMode) {
+        if (p.chargePerHour > maxPrice) return false;
+      } else {
+        if (p.price > maxPrice) return false;
+      }
+    }
     
     // 5. Min Rating filter
     if (p.rating < minRating) return false;
@@ -165,6 +238,29 @@ export default function SearchListings() {
 
     // 9. Date booked filter
     if (date && p.bookedDates && p.bookedDates.includes(date)) return false;
+    
+    // 10. Experience filter (photographer specific)
+    if (selectedProfileType === 'individuals' && selectedExperiences.length > 0) {
+      const matchExp = selectedExperiences.some(range => {
+        if (range === '1-3') return p.experience >= 1 && p.experience <= 3;
+        if (range === '3-5') return p.experience > 3 && p.experience <= 5;
+        if (range === '5+') return p.experience > 5;
+        return false;
+      });
+      if (!matchExp) return false;
+    }
+
+    // 11. Languages filter (photographer specific)
+    if (selectedProfileType === 'individuals' && selectedLanguages.length > 0) {
+      if (!p.languages) return false;
+      const matchLang = p.languages.some(lang => selectedLanguages.includes(lang));
+      if (!matchLang) return false;
+    }
+
+    // 12. Travel Availability filter (photographer specific)
+    if (selectedProfileType === 'individuals' && travelOutsideOnly) {
+      if (!p.travelOutsideCity) return false;
+    }
     
     return true;
   });
@@ -200,6 +296,9 @@ export default function SearchListings() {
   const allLocations = ["Hyderabad", "Banjara Hills", "Jubilee Hills", "Madhapur", "Gachibowli", "Kukatpally", "Ameerpet"];
   const displayLocations = allLocations.filter(loc => loc.toLowerCase().includes(locationSearch.toLowerCase()));
   const isPackagesMode = selectedPackageTiers.length > 0;
+  const hasProfileTypeQuery = queryParams.get('individuals') === 'true' || 
+                              queryParams.get('studios') === 'true' || 
+                              queryParams.get('packages') === 'true';
 
   return (
     <div className="search-listings-root">
@@ -224,208 +323,366 @@ export default function SearchListings() {
               </span>
             </div>
             
-            {/* Category filters */}
-            <div className="filter-section">
-              <h4 className="filter-title">Categories</h4>
-              <ul className="filter-list">
-                {[
-                  'Wedding Photography',
-                  'Pre Wedding Shoot',
-                  'Maternity Shoot',
-                  'Baby Shoot',
-                  'Candid Photography',
-                  'Product Photography'
-                ].map((cat) => (
-                  <li key={cat}>
-                    <label className="filter-item">
-                      <input 
-                        type="radio" 
-                        name="category-filter" 
-                        value={cat}
-                        checked={selectedCategory === cat}
-                        onChange={() => setSelectedCategory(cat)}
-                      />
-                      {cat}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {selectedProfileType === 'individuals' ? (
+              <>
+                {/* PHOTOGRAPHERS SIDEBAR FILTERS */}
 
-            {/* Profile Type Filter */}
-            <div className="filter-section">
-              <h4 className="filter-title">Profile Type</h4>
-              <ul className="filter-list">
-                <li>
-                  <label className="filter-item">
-                    <input 
-                      type="radio" 
-                      name="profile-type-filter" 
-                      value="all" 
-                      checked={selectedProfileType === 'all'}
-                      onChange={() => setSelectedProfileType('all')}
-                    />
-                    All Profiles
-                  </label>
-                </li>
-                <li>
-                  <label className="filter-item">
-                    <input 
-                      type="radio" 
-                      name="profile-type-filter" 
-                      value="studios"
-                      checked={selectedProfileType === 'studios'}
-                      onChange={() => setSelectedProfileType('studios')}
-                    />
-                    Premium Studios
-                  </label>
-                </li>
-                <li>
-                  <label className="filter-item">
-                    <input 
-                      type="radio" 
-                      name="profile-type-filter" 
-                      value="individuals"
-                      checked={selectedProfileType === 'individuals'}
-                      onChange={() => setSelectedProfileType('individuals')}
-                    />
-                    Individual Artists
-                  </label>
-                </li>
-              </ul>
-            </div>
-
-            {/* Package Tiers Filter */}
-            <div className="filter-section">
-              <h4 className="filter-title">Package Tiers</h4>
-              <ul className="filter-list">
-                <li>
-                  <label className="filter-item">
-                    <input 
-                      type="checkbox" 
-                      name="package-tier-filter" 
-                      value="essential"
-                      checked={selectedPackageTiers.includes('essential')}
-                      onChange={() => handlePackageTierToggle('essential')}
-                    />
-                    Essential (Under ₹25k)
-                  </label>
-                </li>
-                <li>
-                  <label className="filter-item">
-                    <input 
-                      type="checkbox" 
-                      name="package-tier-filter" 
-                      value="premium"
-                      checked={selectedPackageTiers.includes('premium')}
-                      onChange={() => handlePackageTierToggle('premium')}
-                    />
-                    Premium (₹25k - ₹50k)
-                  </label>
-                </li>
-                <li>
-                  <label className="filter-item">
-                    <input 
-                      type="checkbox" 
-                      name="package-tier-filter" 
-                      value="luxury"
-                      checked={selectedPackageTiers.includes('luxury')}
-                      onChange={() => handlePackageTierToggle('luxury')}
-                    />
-                    Luxury (Above ₹50k)
-                  </label>
-                </li>
-              </ul>
-            </div>
-            
-            {/* Location Filters */}
-            <div className="filter-section">
-              <h4 className="filter-title">Location</h4>
-              <div className="sidebar-search-box">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                <input 
-                  type="text" 
-                  className="sidebar-search-input" 
-                  id="sidebar-location-search" 
-                  placeholder="Search location"
-                  value={locationSearch}
-                  onChange={(e) => setLocationSearch(e.target.value)}
-                />
-              </div>
-              <ul className="filter-list" id="location-checkbox-container">
-                {displayLocations.map((loc) => {
-                  const isChecked = selectedLocations.includes(loc);
-                  return (
-                    <li key={loc}>
-                      <label className={`filter-item ${isChecked ? 'active' : ''}`}>
-                        <input 
-                          type="checkbox" 
-                          value={loc}
-                          checked={isChecked}
-                          onChange={() => handleLocationToggle(loc)}
-                        />
-                        {loc}
-                      </label>
-                    </li>
-                  );
-                })}
-                {displayLocations.length === 0 && (
-                  <li style={{ fontSize: '12px', color: 'var(--dark-500)', padding: '4px 0' }}>No locations found</li>
-                )}
-              </ul>
-            </div>
-            
-            {/* Photoshoot Date Filter */}
-            <div className="filter-section">
-              <h4 className="filter-title">Photoshoot Date</h4>
-              <CustomCalendar 
-                selectedDate={date} 
-                onSelectDate={setDate}
-                calendarId="sidebar-calendar-picker"
-              />
-            </div>
-            
-            {/* Price Range Filter */}
-            <div className="filter-section">
-              <h4 className="filter-title">Price Range</h4>
-              <div className="price-slider-container">
-                <input 
-                  type="range" 
-                  className="price-slider" 
-                  id="price-slider" 
-                  min="10000" 
-                  max="100000" 
-                  step="5000" 
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-                />
-                <div className="price-range-labels">
-                  <span>₹0</span>
-                  <span id="price-value" style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{maxPrice.toLocaleString('en-IN')}</span>
+                {/* Experience */}
+                <div className={`filter-section ${collapsedSections.experience ? 'collapsed' : ''}`}>
+                  <div
+                    className="filter-section-header"
+                    onClick={() => toggleSection('experience')}
+                    role="button"
+                    aria-expanded={!collapsedSections.experience}
+                  >
+                    <h4 className="filter-title">Experience</h4>
+                    <i className="fa-solid fa-chevron-up accordion-chevron"></i>
+                  </div>
+                  <div className="filter-section-content">
+                    <div className="filter-pill-grid">
+                      {[
+                        { label: '1–3 yrs', value: '1-3' },
+                        { label: '3–5 yrs', value: '3-5' },
+                        { label: '5+ yrs', value: '5+' }
+                      ].map((exp) => {
+                        const isChecked = selectedExperiences.includes(exp.value);
+                        return (
+                          <button
+                            key={exp.value}
+                            type="button"
+                            className={`filter-pill ${isChecked ? 'active' : ''}`}
+                            onClick={() => handleExperienceToggle(exp.value)}
+                          >
+                            {exp.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            
-            {/* Star Rating Filters */}
-            <div className="filter-section">
-              <h4 className="filter-title">Ratings</h4>
-              <ul className="filter-list">
-                {[4, 3, 2].map((stars) => (
-                  <li key={stars}>
-                    <label className="filter-item">
-                      <input 
-                        type="radio" 
-                        name="rating-filter" 
-                        value={stars}
-                        checked={minRating === stars}
-                        onChange={() => setMinRating(stars)}
-                      />
-                      <span className="star-rating-filter"><i className="fa-solid fa-star"></i> {stars}+ Stars</span>
+
+                {/* Hourly Rate */}
+                <div className={`filter-section ${collapsedSections.rate ? 'collapsed' : ''}`}>
+                  <div
+                    className="filter-section-header"
+                    onClick={() => toggleSection('rate')}
+                    role="button"
+                    aria-expanded={!collapsedSections.rate}
+                  >
+                    <h4 className="filter-title">Hourly Rate</h4>
+                    <i className="fa-solid fa-chevron-up accordion-chevron"></i>
+                  </div>
+                  <div className="filter-section-content">
+                    <div className="price-slider-container">
+                      <div className="price-slider-row">
+                        <input
+                          type="range"
+                          className="price-slider"
+                          id="price-slider"
+                          min="1000"
+                          max="5000"
+                          step="200"
+                          value={maxPrice}
+                          onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                        />
+                        <span className="price-current-label">₹{(maxPrice/1000).toFixed(maxPrice % 1000 === 0 ? 0 : 1)}K</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Travel Availability */}
+                <div className="filter-section">
+                  <div className="travel-toggle-row filter-section-header no-collapse">
+                    <h4 className="filter-title" style={{ marginBottom: 0 }}>Will Travel Outside City</h4>
+                    <label className="switch-container" style={{ width: 'auto', padding: 0, cursor: 'pointer' }}>
+                      <div className="switch-wrapper">
+                        <input
+                          type="checkbox"
+                          checked={travelOutsideOnly}
+                          onChange={(e) => setTravelOutsideOnly(e.target.checked)}
+                        />
+                        <span className="switch-slider"></span>
+                      </div>
                     </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                  </div>
+                </div>
+
+                {/* Languages Spoken */}
+                <div className={`filter-section ${collapsedSections.languages ? 'collapsed' : ''}`}>
+                  <div
+                    className="filter-section-header"
+                    onClick={() => toggleSection('languages')}
+                    role="button"
+                    aria-expanded={!collapsedSections.languages}
+                  >
+                    <h4 className="filter-title">Languages Spoken</h4>
+                    <i className="fa-solid fa-chevron-up accordion-chevron"></i>
+                  </div>
+                  <div className="filter-section-content">
+                    <div className="filter-pill-grid">
+                      {['English', 'Telugu', 'Hindi'].map((lang) => {
+                        const isChecked = selectedLanguages.includes(lang);
+                        return (
+                          <button
+                            key={lang}
+                            type="button"
+                            className={`filter-pill ${isChecked ? 'active' : ''}`}
+                            onClick={() => handleLanguageToggle(lang)}
+                          >
+                            {lang}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Available On */}
+                <div className={`filter-section ${collapsedSections.date ? 'collapsed' : ''}`}>
+                  <div
+                    className="filter-section-header"
+                    onClick={() => toggleSection('date')}
+                    role="button"
+                    aria-expanded={!collapsedSections.date}
+                  >
+                    <h4 className="filter-title">
+                      Available On
+                      {date && (
+                        <strong>
+                          : {(() => {
+                            const [y, m, d] = date.split('-');
+                            const mShorts = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                            return `${mShorts[parseInt(m) - 1]} ${parseInt(d)}`;
+                          })()}
+                        </strong>
+                      )}
+                    </h4>
+                    <i className="fa-solid fa-chevron-up accordion-chevron"></i>
+                  </div>
+                  <div className="filter-section-content">
+                    <div className="filter-calendar-wrapper">
+                      <CustomCalendar
+                        selectedDate={date}
+                        onSelectDate={setDate}
+                        calendarId="sidebar-calendar-picker"
+                        isInline={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* STUDIOS AND GENERIC SIDEBAR FILTERS */}
+                {/* Category filters */}
+                <div className="filter-section">
+                  <h4 className="filter-title">Categories</h4>
+                  <ul className="filter-list">
+                    {[
+                      'Wedding Photography',
+                      'Pre Wedding Shoot',
+                      'Maternity Shoot',
+                      'Baby Shoot',
+                      'Candid Photography',
+                      'Product Photography'
+                    ].map((cat) => (
+                      <li key={cat}>
+                        <label className="filter-item">
+                          <input 
+                            type="radio" 
+                            name="category-filter" 
+                            value={cat}
+                            checked={selectedCategory === cat}
+                            onChange={() => setSelectedCategory(cat)}
+                          />
+                          {cat}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Profile Type Filter (Only show if not pre-filtered via query tabs) */}
+                {!hasProfileTypeQuery && (
+                  <div className="filter-section">
+                    <h4 className="filter-title">Profile Type</h4>
+                    <ul className="filter-list">
+                      <li>
+                        <label className="filter-item">
+                          <input 
+                            type="radio" 
+                            name="profile-type-filter" 
+                            value="all" 
+                            checked={selectedProfileType === 'all'}
+                            onChange={() => setSelectedProfileType('all')}
+                          />
+                          All Profiles
+                        </label>
+                      </li>
+                      <li>
+                        <label className="filter-item">
+                          <input 
+                            type="radio" 
+                            name="profile-type-filter" 
+                            value="studios"
+                            checked={selectedProfileType === 'studios'}
+                            onChange={() => setSelectedProfileType('studios')}
+                          />
+                          Premium Studios
+                        </label>
+                      </li>
+                      <li>
+                        <label className="filter-item">
+                          <input 
+                            type="radio" 
+                            name="profile-type-filter" 
+                            value="individuals"
+                            checked={selectedProfileType === 'individuals'}
+                            onChange={() => setSelectedProfileType('individuals')}
+                          />
+                          Individual Artists
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* Package Tiers Filter (Only show if not in individuals mode) */}
+                {selectedProfileType !== 'individuals' && (
+                  <div className="filter-section">
+                    <h4 className="filter-title">Package Tiers</h4>
+                    <ul className="filter-list">
+                      <li>
+                        <label className="filter-item">
+                          <input 
+                            type="checkbox" 
+                            name="package-tier-filter" 
+                            value="essential"
+                            checked={selectedPackageTiers.includes('essential')}
+                            onChange={() => handlePackageTierToggle('essential')}
+                          />
+                          Essential (Under ₹25k)
+                        </label>
+                      </li>
+                      <li>
+                        <label className="filter-item">
+                          <input 
+                            type="checkbox" 
+                            name="package-tier-filter" 
+                            value="premium"
+                            checked={selectedPackageTiers.includes('premium')}
+                            onChange={() => handlePackageTierToggle('premium')}
+                          />
+                          Premium (₹25k - ₹50k)
+                        </label>
+                      </li>
+                      <li>
+                        <label className="filter-item">
+                          <input 
+                            type="checkbox" 
+                            name="package-tier-filter" 
+                            value="luxury"
+                            checked={selectedPackageTiers.includes('luxury')}
+                            onChange={() => handlePackageTierToggle('luxury')}
+                          />
+                          Luxury (Above ₹50k)
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Location Filters */}
+                <div className="filter-section">
+                  <h4 className="filter-title">Location</h4>
+                  <div className="sidebar-search-box">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                    <input 
+                      type="text" 
+                      className="sidebar-search-input" 
+                      id="sidebar-location-search" 
+                      placeholder="Search location"
+                      value={locationSearch}
+                      onChange={(e) => setLocationSearch(e.target.value)}
+                    />
+                  </div>
+                  <ul className="filter-list" id="location-checkbox-container">
+                    {displayLocations.map((loc) => {
+                      const isChecked = selectedLocations.includes(loc);
+                      return (
+                        <li key={loc}>
+                          <label className={`filter-item ${isChecked ? 'active' : ''}`}>
+                            <input 
+                              type="checkbox" 
+                              value={loc}
+                              checked={isChecked}
+                              onChange={() => handleLocationToggle(loc)}
+                            />
+                            {loc}
+                          </label>
+                        </li>
+                      );
+                    })}
+                    {displayLocations.length === 0 && (
+                      <li style={{ fontSize: '12px', color: 'var(--dark-500)', padding: '4px 0' }}>No locations found</li>
+                    )}
+                  </ul>
+                </div>
+                
+                {/* Photoshoot Date Filter */}
+                <div className="filter-section">
+                  <h4 className="filter-title">Photoshoot Date</h4>
+                  <CustomCalendar 
+                    selectedDate={date} 
+                    onSelectDate={setDate}
+                    calendarId="sidebar-calendar-picker"
+                  />
+                </div>
+                
+                {/* Price Range Filter */}
+                <div className="filter-section">
+                  <h4 className="filter-title">Price Range</h4>
+                  <div className="price-slider-container">
+                    <input 
+                      type="range" 
+                      className="price-slider" 
+                      id="price-slider" 
+                      min="10000" 
+                      max="100000" 
+                      step="5000" 
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                    />
+                    <div className="price-range-labels">
+                      <span>₹10,000</span>
+                      <span id="price-value" style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{maxPrice.toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Star Rating Filters */}
+                <div className="filter-section">
+                  <h4 className="filter-title">Ratings</h4>
+                  <ul className="filter-list">
+                    {[4, 3, 2].map((stars) => (
+                      <li key={stars}>
+                        <label className="filter-item">
+                          <input 
+                            type="radio" 
+                            name="rating-filter" 
+                            value={stars}
+                            checked={minRating === stars}
+                            onChange={() => setMinRating(stars)}
+                          />
+                          <span className="star-rating-filter"><i className="fa-solid fa-star"></i> {stars}+ Stars</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
           </aside>
           
           {/* Right Main Results */}

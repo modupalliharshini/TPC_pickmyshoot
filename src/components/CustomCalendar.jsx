@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function CustomCalendar({ selectedDate, onSelectDate, calendarId }) {
+export default function CustomCalendar({ selectedDate, onSelectDate, calendarId, isInline }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -40,7 +40,11 @@ export default function CustomCalendar({ selectedDate, onSelectDate, calendarId 
 
   const handleSelectDate = (day) => {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    onSelectDate(dateStr);
+    if (selectedDate === dateStr) {
+      onSelectDate('');
+    } else {
+      onSelectDate(dateStr);
+    }
     setIsOpen(false);
   };
 
@@ -96,33 +100,13 @@ export default function CustomCalendar({ selectedDate, onSelectDate, calendarId 
     return cells;
   };
 
-  return (
-    <div 
-      className="custom-calendar-picker-wrapper" 
-      ref={calendarRef} 
-      style={{ position: 'relative', width: '100%' }}
-    >
-      <div 
-        className="calendar-selector-btn" 
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen(!isOpen);
-        }}
-        style={{ cursor: 'pointer' }}
-      >
-        <span className="calendar-selected-value">{getDisplayValue()}</span>
-        <i className="fa-regular fa-calendar-days"></i>
-      </div>
-      
-      <div 
-        className={`custom-calendar-picker ${isOpen ? 'show' : ''}`} 
-        id={calendarId}
-        style={{ display: isOpen ? 'block' : 'none' }}
-      >
+  if (isInline) {
+    return (
+      <div className="custom-calendar-inline" id={calendarId}>
         <div className="calendar-header">
           <button 
             type="button" 
-            className="calendar-nav-btn prev-month" 
+            className="calendar-btn" 
             onClick={(e) => handleMonthChange(e, -1)}
             aria-label="Previous month"
           >
@@ -131,7 +115,67 @@ export default function CustomCalendar({ selectedDate, onSelectDate, calendarId 
           <span className="calendar-month-year">{monthNames[currentMonth]} {currentYear}</span>
           <button 
             type="button" 
-            className="calendar-nav-btn next-month" 
+            className="calendar-btn" 
+            onClick={(e) => handleMonthChange(e, 1)}
+            aria-label="Next month"
+          >
+            <i className="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <div className="calendar-weekdays">
+          <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+        </div>
+        
+        <div className="calendar-days">
+          {renderDays()}
+        </div>
+        {selectedDate && (
+          <div className="calendar-clear-row">
+            <button 
+              type="button" 
+              className="calendar-clear-inline-btn"
+              onClick={() => onSelectDate('')}
+            >
+              Clear Date
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className={`custom-calendar-picker ${isOpen ? 'show' : ''}`} 
+      id={calendarId}
+      ref={calendarRef}
+    >
+      <div 
+        className="custom-calendar-trigger" 
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
+      >
+        <span className="calendar-selected-value">{getDisplayValue()}</span>
+        <i className="fa-solid fa-calendar"></i>
+      </div>
+      
+      <div className="custom-calendar-popover" style={{ left: 0, transform: 'none' }}>
+        <div className="calendar-header">
+          <button 
+            type="button" 
+            className="calendar-btn" 
+            onClick={(e) => handleMonthChange(e, -1)}
+            aria-label="Previous month"
+          >
+            <i className="fa-solid fa-chevron-left"></i>
+          </button>
+          <span className="calendar-month-year">{monthNames[currentMonth]} {currentYear}</span>
+          <button 
+            type="button" 
+            className="calendar-btn" 
             onClick={(e) => handleMonthChange(e, 1)}
             aria-label="Next month"
           >
