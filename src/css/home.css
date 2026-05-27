@@ -34,7 +34,7 @@
 }
 
 .hero-desc {
-  font-size: 16px;
+  font-size: 20px;
   color: var(--dark-500);
   margin-bottom: 40px;
   max-width: 480px;
@@ -235,12 +235,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, 
-    rgba(255, 255, 255, 1) 0%, 
-    rgba(255, 255, 255, 0.95) 12%, 
-    rgba(255, 255, 255, 0.35) 45%, 
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.95) 12%,
+      rgba(255, 255, 255, 0.35) 45%,
+      rgba(255, 255, 255, 0) 100%);
   pointer-events: none;
   z-index: 2;
 }
@@ -396,8 +395,15 @@
 
 /* Animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-8px) translateX(-4px); }
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-8px) translateX(-4px);
+  }
 }
 
 /* Responsive */
@@ -488,6 +494,7 @@
 }
 
 @media (max-width: 768px) {
+
   /* Position calendar picker as screen-centered fixed modal overlay on mobile screens */
   .custom-calendar-popover {
     position: fixed;
@@ -844,23 +851,23 @@
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .featured-grid {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-  
+
   .why-choose-us-grid {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  
+
   .why-choose-us-image-wrapper {
     height: 300px;
     max-width: 500px;
     margin: 0 auto;
   }
-  
+
   .stat-badge-overlay {
     left: 10px;
   }
@@ -1088,6 +1095,7 @@
     opacity: 0;
     transform: translateX(-50%) translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
@@ -1099,6 +1107,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
