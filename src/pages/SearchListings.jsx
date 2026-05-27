@@ -691,32 +691,7 @@ export default function SearchListings() {
           </aside>
           )}
           
-          {/* Right Main Results */}
           <main className={isPackagesMode ? 'packages-main' : ''}>
-            {/* Header tools */}
-            <div className="results-header">
-              <div className="results-title-group">
-                <h2 id="results-title-heading">{getBreadcrumbText()}</h2>
-                <span className="results-count" id="results-count-label">
-                  {sortedPhotographers.length.toLocaleString('en-IN')}+ {isPackagesMode ? 'Packages' : 'Photographers'} found
-                </span>
-              </div>
-              
-              <div className="results-actions">
-                <select 
-                  className="sort-select" 
-                  id="sort-by"
-                  value={sortKey}
-                  onChange={(e) => setSortKey(e.target.value)}
-                >
-                  <option value="popular">Sort by: Popular</option>
-                  <option value="rating">Sort by: Top Rated</option>
-                  <option value="price-asc">Sort by: Price (Low to High)</option>
-                  <option value="price-desc">Sort by: Price (High to Low)</option>
-                </select>
-              </div>
-            </div>
-            
             {/* Grid list of photographers */}
             <div className="photographers-grid" id="photographers-grid-list">
               {sortedPhotographers.map((p) => {

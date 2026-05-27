@@ -409,14 +409,14 @@
 
 @media (max-width: 991px) {
   .hero-section {
-    padding: 60px 0;
+    padding: 50px 0;
     min-height: auto;
     background-color: var(--white);
   }
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 32px;
     text-align: center;
   }
 
@@ -424,18 +424,31 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: 42px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+  }
+
+  .hero-title br {
+    display: none;
   }
 
   .hero-desc {
     margin-left: auto;
     margin-right: auto;
+    font-size: 15px;
+    margin-bottom: 28px;
   }
 
   /* 4-Field Search Widget Stacking on Mobile/Tablet */
   .search-widget {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -443,21 +456,21 @@
   }
 
   .search-submit-btn {
-    grid-column: span 1;
+    grid-column: span 2;
     justify-content: center;
     padding: 14px 24px;
   }
 
   .trust-badges-row {
     justify-content: center;
-    gap: 16px 24px;
+    gap: 12px 20px;
   }
 
   /* Bleeding Hero Image Wrapper becomes normal relative flow container centered on mobile */
   .hero-image-wrapper {
     position: relative;
     width: 100%;
-    height: 360px;
+    height: 300px;
     max-width: 560px;
     margin: 0 auto;
     border-radius: var(--radius-lg);
@@ -474,13 +487,44 @@
   }
 }
 
+@media (max-width: 768px) {
+  /* Position calendar picker as screen-centered fixed modal overlay on mobile screens */
+  .custom-calendar-popover {
+    position: fixed;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 290px !important;
+    max-width: calc(100vw - 20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    z-index: 2000;
+  }
+}
+
 @media (max-width: 640px) {
   .hero-title {
-    font-size: 38px;
+    font-size: 32px;
+    letter-spacing: -0.5px;
+    line-height: 1.25;
+  }
+
+  .hero-image-wrapper {
+    height: 220px;
+    margin-top: 10px;
   }
 
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .search-widget {
+    grid-template-columns: 1fr;
+  }
+
+  .search-submit-btn {
+    grid-column: span 1;
   }
 }
 
