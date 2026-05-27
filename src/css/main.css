@@ -3,13 +3,13 @@
 
 :root {
   /* Color Palette */
-  --primary: #de1b52;
-  --primary-hover: #c41243;
+  --primary: #C7100D;
+  --primary-hover: #A30D0B;
   --primary-light: #fff0f3;
   --accent-whatsapp: #25d366;
   --accent-whatsapp-hover: #1ebd54;
   --accent-whatsapp-light: #e8faf0;
-  
+
   --dark-900: #0f172a;
   --dark-800: #1e293b;
   --dark-700: #334155;
@@ -19,22 +19,21 @@
   --light-100: #f1f5f9;
   --light-50: #f8fafc;
   --white: #ffffff;
-  
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
   --shadow-premium: 0 20px 40px -15px rgba(222, 27, 82, 0.08), 0 15px 30px -10px rgba(0, 0, 0, 0.04);
-  
+
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 30px;
   --radius-round: 50%;
-  
+
   /* Font Stack */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,7 +57,12 @@ body {
 }
 
 /* Typography Helpers */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--dark-900);
   font-weight: 700;
 }
@@ -150,13 +154,52 @@ a {
 .navbar {
   background-color: var(--white);
   border-bottom: 1px solid var(--light-200);
-  height: 80px;
+  height: 115px;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
+}
+
+/* Navbar specific container overrides to match thepatternscompany.com Bootstrap layout exactly */
+.navbar .container {
+  width: 100%;
+  padding-right: 16px;
+  padding-left: 16px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .navbar .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  .navbar .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .navbar .container {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .navbar .container {
+    max-width: 1320px;
+  }
 }
 
 .navbar-container {
@@ -206,12 +249,12 @@ a {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 32px;
   list-style: none;
 }
 
 .nav-links a {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--dark-700);
 }
@@ -504,7 +547,7 @@ input[type="date"].form-input {
   position: relative;
   transform: translateY(-20px);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  
+
   /* Scrollable Modal fixes */
   max-height: calc(100vh - 40px);
   overflow-y: auto;
@@ -561,10 +604,21 @@ input[type="date"].form-input {
 }
 
 /* Utilities */
-.text-center { text-align: center; }
-.text-accent { color: var(--primary) !important; }
-.mt-4 { margin-top: 16px; }
-.mb-4 { margin-bottom: 16px; }
+.text-center {
+  text-align: center;
+}
+
+.text-accent {
+  color: var(--primary) !important;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
 
 /* Mobile Menu Button style */
 .mobile-menu-btn {
@@ -592,7 +646,8 @@ input[type="date"].form-input {
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: block;
-    order: 3; /* Position on the right side of nav-right or container */
+    order: 3;
+    /* Position on the right side of nav-right or container */
   }
 
   .nav-right {
@@ -603,7 +658,7 @@ input[type="date"].form-input {
   .nav-links {
     display: none;
     position: absolute;
-    top: 80px;
+    top: 70px;
     left: 0;
     width: 100%;
     background-color: var(--white);
@@ -630,17 +685,17 @@ input[type="date"].form-input {
     padding: 10px 0;
     font-size: 15px;
   }
-  
+
   .navbar-container {
     padding: 0 16px;
     position: relative;
   }
-  
+
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  
+
   .footer-bottom {
     flex-direction: column;
     gap: 16px;
@@ -655,6 +710,7 @@ input[type="date"].form-input {
     margin: 8px;
     border-radius: var(--radius-md);
   }
+
   .modal-close {
     top: 16px;
     right: 16px;

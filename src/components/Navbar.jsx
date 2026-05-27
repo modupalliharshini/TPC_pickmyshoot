@@ -49,7 +49,7 @@ export default function Navbar() {
       <div className="container navbar-container">
         <div className="nav-left">
           <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-            <img src="/assets/logo.png" alt="pickmyshoot Logo" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/assets/logo.png" alt="pickmyshoot Logo" style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
           </Link>
           <div className="location-selector">
             <i className="fa-solid fa-location-dot"></i>
