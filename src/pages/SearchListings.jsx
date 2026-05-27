@@ -313,8 +313,9 @@ export default function SearchListings() {
 
       {/* Search Layout Section */}
       <section className="container">
-        <div className="search-layout">
-          {/* Left Sidebar Filters */}
+        <div className={`search-layout ${isPackagesMode ? 'packages-layout' : ''}`}>
+          {/* Left Sidebar Filters — hidden in packages mode */}
+          {!isPackagesMode && (
           <aside className="filter-sidebar">
             <div className="filter-header">
               <h3>Filters</h3>
@@ -642,25 +643,29 @@ export default function SearchListings() {
                 
                 {/* Price Range Filter */}
                 <div className="filter-section">
-                  <h4 className="filter-title">Price Range</h4>
+                  <div className="filter-section-header no-collapse" style={{ cursor: 'default' }}>
+                    <h4 className="filter-title">
+                      Price Range
+                      {maxPrice < 100000 && <strong>: ₹{maxPrice.toLocaleString('en-IN')}</strong>}
+                    </h4>
+                  </div>
                   <div className="price-slider-container">
-                    <input 
-                      type="range" 
-                      className="price-slider" 
-                      id="price-slider" 
-                      min="10000" 
-                      max="100000" 
-                      step="5000" 
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-                    />
-                    <div className="price-range-labels">
-                      <span>₹10,000</span>
-                      <span id="price-value" style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{maxPrice.toLocaleString('en-IN')}</span>
+                    <div className="price-slider-row">
+                      <input
+                        type="range"
+                        className="price-slider"
+                        id="price-slider-studio"
+                        min="10000"
+                        max="100000"
+                        step="5000"
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                      />
+                      <span className="price-current-label">₹{Math.round(maxPrice/1000)}K</span>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Star Rating Filters */}
                 <div className="filter-section">
                   <h4 className="filter-title">Ratings</h4>
@@ -684,9 +689,10 @@ export default function SearchListings() {
               </>
             )}
           </aside>
+          )}
           
           {/* Right Main Results */}
-          <main>
+          <main className={isPackagesMode ? 'packages-main' : ''}>
             {/* Header tools */}
             <div className="results-header">
               <div className="results-title-group">

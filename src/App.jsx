@@ -8,6 +8,7 @@ import SearchListings from './pages/SearchListings';
 import ProfileDetails from './pages/ProfileDetails';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import Blog from './pages/Blog';
 
 // Protected Route for authenticated users
 function ProtectedRoute({ children }) {
@@ -83,6 +84,15 @@ export default function App() {
                 <Dashboard />
               </MainLayout>
             </PhotographerRoute>
+          } />
+
+          {/* Blog Route */}
+          <Route path="/blog" element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Blog />
+              </MainLayout>
+            </ProtectedRoute>
           } />
 
           {/* Fallback routing */}

@@ -39,6 +39,7 @@ export default function Navbar() {
   const isPhotographersActive = isSearchActive && getQueryParam('individuals') === 'true';
   const isStudiosActive = isSearchActive && getQueryParam('studios') === 'true';
   const isPackagesActive = isSearchActive && getQueryParam('packages') === 'true';
+  const isBlogActive = location.pathname === '/blog';
 
   const userInitials = currentUserRole === 'user' ? 'U' : 'P';
   const userTitle = currentUserRole === 'user' ? 'Customer User' : 'Photographer';
@@ -69,6 +70,9 @@ export default function Navbar() {
           </li>
           <li className={isPackagesActive ? 'active' : ''}>
             <Link to="/search?packages=true">Packages</Link>
+          </li>
+          <li className={isBlogActive ? 'active' : ''}>
+            <Link to="/blog">Blog</Link>
           </li>
         </ul>
 
