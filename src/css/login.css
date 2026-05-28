@@ -131,7 +131,7 @@
 
 .login-form-wrapper.show {
   opacity: 1;
-  max-height: 300px;
+  max-height: 800px;
   margin-top: 24px;
 }
 
