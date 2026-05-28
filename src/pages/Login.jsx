@@ -15,6 +15,7 @@ export default function Login() {
   const [showForm, setShowForm] = useState(false);
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Redirect if already logged in
@@ -32,6 +33,7 @@ export default function Login() {
     setSelectedRole(role);
     setShowForm(true);
     setErrorMsg(null);
+    setSuccessMsg(null);
     setIsSignUpMode(false);
     setEmail('');
     setPassword('');
@@ -42,6 +44,7 @@ export default function Login() {
     e.preventDefault();
     if (!selectedRole) return;
     setErrorMsg(null);
+    setSuccessMsg(null);
     setLoading(true);
 
     try {
@@ -54,6 +57,9 @@ export default function Login() {
         const res = await signUp(fullName, email, password, selectedRole);
         if (!res.success) {
           setErrorMsg(res.message);
+        } else if (res.message) {
+          // Registration succeeded but requires email verification
+          setSuccessMsg(res.message);
         }
       } else {
         const res = await login(email, password);
@@ -141,6 +147,7 @@ export default function Login() {
               onClick={() => {
                 setIsSignUpMode(false);
                 setErrorMsg(null);
+                setSuccessMsg(null);
               }}
             >
               <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '6px' }}></i> Log In
@@ -163,6 +170,7 @@ export default function Login() {
               onClick={() => {
                 setIsSignUpMode(true);
                 setErrorMsg(null);
+                setSuccessMsg(null);
                 setFullName('');
               }}
             >
@@ -170,142 +178,189 @@ export default function Login() {
             </button>
           </div>
 
-          <h3 id="form-heading" style={{ fontSize: '18px', marginBottom: '20px', fontWeight: 800, color: '#ffffff', letterSpacing: '0.3px' }}>
-            {isSignUpMode 
-              ? (selectedRole === 'user' ? 'Register Customer Account' : 'Register Professional Studio')
-              : (selectedRole === 'user' ? 'Login as Customer User' : 'Login as Professional Photographer')
-            }
-          </h3>
-
-          {/* Dynamic Error Alerts */}
-          {errorMsg && (
+          {successMsg ? (
             <div style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.15)', 
-              borderLeft: '4px solid #fff', 
-              padding: '12px 16px', 
-              borderRadius: '6px', 
-              marginBottom: '20px', 
-              fontSize: '13px',
-              color: '#fff',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
+              backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+              border: '1px solid rgba(255, 255, 255, 0.2)', 
+              padding: '32px 24px', 
+              borderRadius: '12px', 
+              marginTop: '16px',
+              textAlign: 'center',
+              animation: 'fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
-              <span style={{ fontWeight: 600 }}>⚠️ {errorMsg}</span>
-              {errorMsg.includes("Account not found") && (
-                <button 
-                  type="button" 
-                  style={{ 
-                    background: '#ffffff', 
-                    color: 'var(--primary)', 
-                    border: 'none', 
-                    padding: '6px 12px', 
-                    borderRadius: '4px', 
-                    fontSize: '12px', 
-                    fontWeight: 700, 
-                    cursor: 'pointer',
-                    alignSelf: 'flex-start',
-                    boxShadow: 'var(--shadow-sm)',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onClick={() => {
-                    setIsSignUpMode(true);
-                    setErrorMsg(null);
-                    setFullName('');
-                  }}
-                >
-                  Create Account Now
-                </button>
-              )}
-            </div>
-          )}
-
-          <form id="login-form" onSubmit={handleLoginSubmit}>
-            {/* Dynamic Full Name Input */}
-            {isSignUpMode && (
-              <div className="form-group">
-                <label className="form-label" htmlFor="fullName">Full Name / Brand Name</label>
-                <input 
-                  className="form-input" 
-                  type="text" 
-                  id="fullName" 
-                  required 
-                  placeholder="e.g., Harish Kumar"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
+              <div style={{ 
+                width: '64px', 
+                height: '64px', 
+                borderRadius: '50%', 
+                background: 'rgba(255, 255, 255, 0.15)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                margin: '0 auto 20px auto',
+                fontSize: '28px',
+                color: '#ffffff'
+              }}>
+                <i className="fa-solid fa-envelope-circle-check"></i>
               </div>
-            )}
+              <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '12px' }}>Verify Your Email</h4>
+              <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)', lineHeight: '1.6', marginBottom: '24px' }}>
+                {successMsg}
+              </p>
+              <button 
+                type="button" 
+                className="btn btn-secondary"
+                style={{ width: '100%', padding: '12px' }}
+                onClick={() => {
+                  setSuccessMsg(null);
+                  setIsSignUpMode(false);
+                }}
+              >
+                <i className="fa-solid fa-arrow-left" style={{ marginRight: '8px' }}></i> Return to Login
+              </button>
+            </div>
+          ) : (
+            <>
+              <h3 id="form-heading" style={{ fontSize: '18px', marginBottom: '20px', fontWeight: 800, color: '#ffffff', letterSpacing: '0.3px' }}>
+                {isSignUpMode 
+                  ? (selectedRole === 'user' ? 'Register Customer Account' : 'Register Professional Studio')
+                  : (selectedRole === 'user' ? 'Login as Customer User' : 'Login as Professional Photographer')
+                }
+              </h3>
 
-            {/* Email Field */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="email">Email Address</label>
-              <input 
-                className="form-input" 
-                type="email" 
-                id="email" 
-                required 
-                placeholder="e.g., example@domain.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            
-            {/* Password Field */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="password">Password</label>
-              <input 
-                className="form-input" 
-                type="password" 
-                id="password" 
-                required 
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            
-            <button type="submit" className="btn btn-secondary form-submit-btn" disabled={loading} style={{ width: '100%' }}>
-              {loading ? (
-                <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</>
-              ) : (
-                isSignUpMode ? 'Register & Sign In' : 'Log In'
+              {/* Dynamic Error Alerts */}
+              {errorMsg && (
+                <div style={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)', 
+                  borderLeft: '4px solid #fff', 
+                  padding: '12px 16px', 
+                  borderRadius: '6px', 
+                  marginBottom: '20px', 
+                  fontSize: '13px',
+                  color: '#fff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontWeight: 600 }}>⚠️ {errorMsg}</span>
+                  {errorMsg.includes("Account not found") && (
+                    <button 
+                      type="button" 
+                      style={{ 
+                        background: '#ffffff', 
+                        color: 'var(--primary)', 
+                        border: 'none', 
+                        padding: '6px 12px', 
+                        borderRadius: '4px', 
+                        fontSize: '12px', 
+                        fontWeight: 700, 
+                        cursor: 'pointer',
+                        alignSelf: 'flex-start',
+                        boxShadow: 'var(--shadow-sm)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onClick={() => {
+                        setIsSignUpMode(true);
+                        setErrorMsg(null);
+                        setSuccessMsg(null);
+                        setFullName('');
+                      }}
+                    >
+                      Create Account Now
+                    </button>
+                  )}
+                </div>
               )}
-              {!loading && <i className="fa-solid fa-arrow-right" style={{ marginLeft: '8px' }}></i>}
-            </button>
 
-            {/* Mode Switch Toggle */}
-            <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
-              {isSignUpMode ? (
-                <span>
-                  Already have an account?{' '}
-                  <span 
-                    style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
-                    onClick={() => {
-                      setIsSignUpMode(false);
-                      setErrorMsg(null);
-                    }}
-                  >
-                    Log In here
-                  </span>
-                </span>
-              ) : (
-                <span>
-                  Don't have an account?{' '}
-                  <span 
-                    style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
-                    onClick={() => {
-                      setIsSignUpMode(true);
-                      setErrorMsg(null);
-                      setFullName('');
-                    }}
-                  >
-                    Sign Up here
-                  </span>
-                </span>
-              )}
-            </div>
-          </form>
+              <form id="login-form" onSubmit={handleLoginSubmit}>
+                {/* Dynamic Full Name Input */}
+                {isSignUpMode && (
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="fullName">Full Name / Brand Name</label>
+                    <input 
+                      className="form-input" 
+                      type="text" 
+                      id="fullName" 
+                      required 
+                      placeholder="e.g., Harish Kumar"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {/* Email Field */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="email">Email Address</label>
+                  <input 
+                    className="form-input" 
+                    type="email" 
+                    id="email" 
+                    required 
+                    placeholder="e.g., example@domain.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                
+                {/* Password Field */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="password">Password</label>
+                  <input 
+                    className="form-input" 
+                    type="password" 
+                    id="password" 
+                    required 
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                
+                <button type="submit" className="btn btn-secondary form-submit-btn" disabled={loading} style={{ width: '100%' }}>
+                  {loading ? (
+                    <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</>
+                  ) : (
+                    isSignUpMode ? 'Register & Sign In' : 'Log In'
+                  )}
+                  {!loading && <i className="fa-solid fa-arrow-right" style={{ marginLeft: '8px' }}></i>}
+                </button>
+
+                {/* Mode Switch Toggle */}
+                <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
+                  {isSignUpMode ? (
+                    <span>
+                      Already have an account?{' '}
+                      <span 
+                        style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
+                        onClick={() => {
+                          setIsSignUpMode(false);
+                          setErrorMsg(null);
+                          setSuccessMsg(null);
+                        }}
+                      >
+                        Log In here
+                      </span>
+                    </span>
+                  ) : (
+                    <span>
+                      Don't have an account?{' '}
+                      <span 
+                        style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
+                        onClick={() => {
+                          setIsSignUpMode(true);
+                          setErrorMsg(null);
+                          setSuccessMsg(null);
+                          setFullName('');
+                        }}
+                      >
+                        Sign Up here
+                      </span>
+                    </span>
+                  )}
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </div>

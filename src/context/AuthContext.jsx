@@ -27,26 +27,53 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('email', email)
-        .single();
+      // Execute official Supabase Auth sign-in!
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password: pass
+      });
 
-      if (error || !data) {
-        return { success: false, message: 'Account not found. Please register to create a new account!' };
+      if (authError) {
+        console.error("Supabase Auth login error:", authError);
+        return { success: false, message: authError.message };
       }
 
-      if (data.password !== pass) {
-        return { success: false, message: 'Invalid credentials. Please check your password.' };
+      const user = authData.user;
+
+      // Query dynamic user details from profiles table
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError || !profile) {
+        console.warn("Public profile row not found. Creating fallback row...");
+        // Fallback row creation
+        const fallbackRole = user.user_metadata?.role || 'user';
+        const fallbackName = user.user_metadata?.name || email.split('@')[0];
+        
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .upsert({ id: user.id, email: user.email, role: fallbackRole, name: fallbackName })
+          .select()
+          .single();
+          
+        const activeProfile = newProfile || { id: user.id, email: user.email, role: fallbackRole, name: fallbackName };
+        
+        localStorage.setItem('currentUserRole', activeProfile.role);
+        localStorage.setItem('currentUser', JSON.stringify(activeProfile));
+        setCurrentUserRole(activeProfile.role);
+        setCurrentUser(activeProfile);
+        return { success: true, user: activeProfile };
       }
 
       // Store in memory & localStorage
-      localStorage.setItem('currentUserRole', data.role);
-      localStorage.setItem('currentUser', JSON.stringify(data));
-      setCurrentUserRole(data.role);
-      setCurrentUser(data);
-      return { success: true, user: data };
+      localStorage.setItem('currentUserRole', profile.role);
+      localStorage.setItem('currentUser', JSON.stringify(profile));
+      setCurrentUserRole(profile.role);
+      setCurrentUser(profile);
+      return { success: true, user: profile };
     } catch (err) {
       console.error("Supabase login connection error:", err);
       return { success: false, message: 'Connection error. Please try again.' };
@@ -56,27 +83,45 @@ export function AuthProvider({ children }) {
   // Support dynamic signup
   const signUp = async (name, email, password, role) => {
     try {
-      // Check if user already exists
-      const { data: existingUser } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .maybeSingle();
+      // Execute official Supabase Auth sign-up!
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            role
+          }
+        }
+      });
 
-      if (existingUser) {
-        return { success: false, message: 'An account with this email already exists!' };
+      if (authError) {
+        console.error("Supabase Auth sign-up error:", authError);
+        return { success: false, message: authError.message };
       }
 
-      // Create new user profile in Supabase Postgres
-      const { data, error } = await supabase
+      const user = authData.user;
+      if (!user) {
+        return { success: false, message: 'Registration initiated! Please check your email inbox to confirm your account.' };
+      }
+
+      // Check if email confirmation is turned on on their project (user might be in unconfirmed state)
+      const isConfirmed = user.email_confirmed_at || authData.session;
+
+      // Sync public profile row to profiles table
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .insert([{ name, email, password, role }])
+        .insert([{
+          id: user.id,
+          email: email,
+          role: role,
+          name: name
+        }])
         .select()
         .single();
 
-      if (error) {
-        console.error("SignUp insert error:", error);
-        return { success: false, message: 'Failed to create account: ' + error.message };
+      if (profileError) {
+        console.error("Profile sync error:", profileError);
       }
 
       // If they registered as a photographer, initialize a default customizable profile!
@@ -122,19 +167,28 @@ export function AuthProvider({ children }) {
         }
       }
 
-      // Auto login after successful signup
-      localStorage.setItem('currentUserRole', data.role);
-      localStorage.setItem('currentUser', JSON.stringify(data));
-      setCurrentUserRole(data.role);
-      setCurrentUser(data);
-      return { success: true, user: data };
+      if (!isConfirmed) {
+        return { 
+          success: true, 
+          message: 'Registration successful! An activation link has been sent to your email. Please click the link to confirm your account and log in!' 
+        };
+      }
+
+      // Auto login after successful signup (if immediately confirmed / verification turned off)
+      const activeProfile = profile || { id: user.id, email, role, name };
+      localStorage.setItem('currentUserRole', activeProfile.role);
+      localStorage.setItem('currentUser', JSON.stringify(activeProfile));
+      setCurrentUserRole(activeProfile.role);
+      setCurrentUser(activeProfile);
+      return { success: true, user: activeProfile };
     } catch (err) {
       console.error("SignUp connection error:", err);
       return { success: false, message: 'Connection error during registration.' };
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('currentUserRole');
     localStorage.removeItem('currentUser');
     setCurrentUserRole(null);
