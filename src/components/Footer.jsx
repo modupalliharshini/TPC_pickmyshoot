@@ -10,7 +10,7 @@ export default function Footer() {
             <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
           </div>
           <p className="footer-desc">Find the perfect verified photographers for weddings, pre-weddings, baby shoots and events in India.</p>
-          <div style={{ display: 'flex', gap: '12px', fontSize: '18px', color: 'var(--dark-500)' }}>
+          <div style={{ display: 'flex', gap: '12px', fontSize: '18px', color: 'rgba(255, 255, 255, 0.8)' }}>
             <a href="#" style={{ color: 'inherit' }}><i className="fa-brands fa-facebook"></i></a>
             <a href="#" style={{ color: 'inherit' }}><i className="fa-brands fa-instagram"></i></a>
             <a href="#" style={{ color: 'inherit' }}><i className="fa-brands fa-twitter"></i></a>

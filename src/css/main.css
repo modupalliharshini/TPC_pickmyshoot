@@ -398,7 +398,7 @@ footer {
 }
 
 .footer-desc {
-  color: var(--dark-500);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
   margin-bottom: 20px;
   max-width: 280px;
@@ -430,13 +430,13 @@ footer {
 }
 
 .footer-links a {
-  color: var(--dark-500);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 14px;
   transition: var(--transition-fast);
 }
 
 .footer-links a:hover {
-  color: var(--primary);
+  color: var(--white);
   padding-left: 4px;
 }
 
@@ -444,7 +444,7 @@ footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--dark-500);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 14px;
   margin-bottom: 12px;
 }
@@ -455,8 +455,17 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--dark-500);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 13px;
+}
+
+.footer-bottom a {
+  color: inherit;
+  transition: var(--transition-fast);
+}
+
+.footer-bottom a:hover {
+  color: var(--white);
 }
 
 /* Modern Form & Input System */
