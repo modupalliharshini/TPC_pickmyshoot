@@ -33,8 +33,7 @@
 
   /* Font Stack */
   --font-sans: 'Montserrat', sans-serif;
-  --font-serif: 'Montserrat', sans-serif;
-  --font-paragraph: 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -70,9 +69,6 @@ h6 {
   font-weight: 700;
 }
 
-p {
-  font-family: var(--font-paragraph);
-}
 
 a {
   color: inherit;
