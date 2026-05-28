@@ -33,14 +33,9 @@ export default function Login() {
     setShowForm(true);
     setErrorMsg(null);
     setIsSignUpMode(false);
-
-    if (role === 'user') {
-      setEmail('customer@pickmyshoot.com');
-      setPassword('password123');
-    } else {
-      setEmail('photographer@pickmyshoot.com');
-      setPassword('password123');
-    }
+    setEmail('');
+    setPassword('');
+    setFullName('');
   };
 
   const handleLoginSubmit = async (e) => {
@@ -119,7 +114,63 @@ export default function Login() {
         
         {/* Login Form (Fades and slides in when a role is selected) */}
         <div className={`login-form-wrapper ${showForm ? 'show' : ''}`} id="login-form-wrapper">
-          <h3 id="form-heading" style={{ fontSize: '20px', marginBottom: '20px', fontWeight: 700 }}>
+          {/* Sub-tabs Selector for Log In vs Create Account */}
+          <div style={{ 
+            display: 'flex', 
+            borderRadius: '10px', 
+            background: 'rgba(255, 255, 255, 0.1)', 
+            padding: '4px', 
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.15)'
+          }}>
+            <button 
+              type="button" 
+              style={{ 
+                flex: 1, 
+                border: 'none', 
+                padding: '10px', 
+                borderRadius: '8px', 
+                fontSize: '14px', 
+                fontWeight: 700, 
+                background: !isSignUpMode ? '#ffffff' : 'transparent', 
+                color: !isSignUpMode ? 'var(--primary)' : '#ffffff',
+                cursor: 'pointer',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: !isSignUpMode ? 'var(--shadow-sm)' : 'none'
+              }}
+              onClick={() => {
+                setIsSignUpMode(false);
+                setErrorMsg(null);
+              }}
+            >
+              <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '6px' }}></i> Log In
+            </button>
+            <button 
+              type="button" 
+              style={{ 
+                flex: 1, 
+                border: 'none', 
+                padding: '10px', 
+                borderRadius: '8px', 
+                fontSize: '14px', 
+                fontWeight: 700, 
+                background: isSignUpMode ? '#ffffff' : 'transparent', 
+                color: isSignUpMode ? 'var(--primary)' : '#ffffff',
+                cursor: 'pointer',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: isSignUpMode ? 'var(--shadow-sm)' : 'none'
+              }}
+              onClick={() => {
+                setIsSignUpMode(true);
+                setErrorMsg(null);
+                setFullName('');
+              }}
+            >
+              <i className="fa-solid fa-user-plus" style={{ marginRight: '6px' }}></i> Create Account
+            </button>
+          </div>
+
+          <h3 id="form-heading" style={{ fontSize: '18px', marginBottom: '20px', fontWeight: 800, color: '#ffffff', letterSpacing: '0.3px' }}>
             {isSignUpMode 
               ? (selectedRole === 'user' ? 'Register Customer Account' : 'Register Professional Studio')
               : (selectedRole === 'user' ? 'Login as Customer User' : 'Login as Professional Photographer')

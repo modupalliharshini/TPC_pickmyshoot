@@ -77,17 +77,28 @@ const mapDbLead = (dbRecord) => {
 };
 
 export default function Dashboard() {
-  const { login, logout } = useAuth();
+  const { currentUser, login, logout } = useAuth();
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
   const [photographer, setPhotographer] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // Dynamic photographer mapping matching AuthContext
+  const getPhotographerId = () => {
+    if (!currentUser) return 'the-wedding-story';
+    if (currentUser.email === 'photographer@pickmyshoot.com') {
+      return 'the-wedding-story';
+    }
+    return currentUser.email.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  };
+
   const loadLeads = async () => {
     try {
+      const pId = getPhotographerId();
       const { data, error } = await supabase
         .from('leads')
         .select('*')
+        .eq('photographer_id', pId)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -102,10 +113,11 @@ export default function Dashboard() {
 
   const loadPhotographer = async () => {
     try {
+      const pId = getPhotographerId();
       const { data, error } = await supabase
         .from('photographers')
         .select('*')
-        .eq('id', 'the-wedding-story')
+        .eq('id', pId)
         .single();
       
       if (error) {
@@ -119,24 +131,27 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    loadLeads();
-    loadPhotographer();
-  }, []);
+    if (currentUser) {
+      loadLeads();
+      loadPhotographer();
+    }
+  }, [currentUser]);
 
   const handleClearLeads = async () => {
-    if (window.confirm("Are you sure you want to clear all simulation leads from Supabase?")) {
+    if (!photographer) return;
+    if (window.confirm("Are you sure you want to clear your inquiries from Supabase?")) {
       try {
         const { error } = await supabase
           .from('leads')
           .delete()
-          .neq('id', '00000000-0000-0000-0000-000000000000');
+          .eq('photographer_id', photographer.id);
         
         if (error) {
           console.error("Error clearing leads from Supabase:", error);
           alert("Failed to clear leads: " + error.message);
         } else {
           setLeads([]);
-          alert("Simulation leads cleared successfully from Supabase!");
+          alert("Your inquiries cleared successfully from Supabase!");
         }
       } catch (err) {
         console.error("Clear leads connection failed:", err);

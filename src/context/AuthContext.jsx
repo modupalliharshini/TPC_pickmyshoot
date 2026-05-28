@@ -82,7 +82,7 @@ export function AuthProvider({ children }) {
       // If they registered as a photographer, initialize a default customizable profile!
       if (role === 'photographer') {
         const cleanName = name.trim();
-        const photoId = cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 1000);
+        const photoId = email.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         
         const { error: profileError } = await supabase
           .from('photographers')
