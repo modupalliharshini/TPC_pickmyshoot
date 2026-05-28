@@ -54,7 +54,7 @@ export default function Navbar() {
       <div className="container navbar-container">
         <div className="nav-left">
           <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-            <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '85px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '100px', width: 'auto', objectFit: 'contain' }} />
           </Link>
         </div>
 

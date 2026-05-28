@@ -79,7 +79,7 @@ export default function Login() {
     <div className="login-page">
       <div className="login-card-container">
         <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-          <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '55px', width: 'auto', objectFit: 'contain' }} />
+          <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '90px', width: 'auto', objectFit: 'contain' }} />
         </div>
         <div className="login-subtitle">
           Find the perfect photographer for every moment or showcase your portfolio to receive premium customer leads.
