@@ -1,9 +1,80 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { PHOTOGRAPHERS, updatePhotographer } from '../data/database';
+import { supabase } from '../context/supabase';
 import EditProfileModal from '../components/EditProfileModal';
 import '../css/main.css';
+
+// Helper to map Supabase database fields (snake_case) to Frontend properties (camelCase)
+const mapDbPhotographer = (dbRecord) => {
+  return {
+    id: dbRecord.id,
+    name: dbRecord.name,
+    rating: Number(dbRecord.rating),
+    reviews: Number(dbRecord.reviews),
+    experience: Number(dbRecord.experience),
+    price: Number(dbRecord.price),
+    location: dbRecord.location,
+    city: dbRecord.city,
+    categories: dbRecord.categories,
+    image: dbRecord.image,
+    gallery: dbRecord.gallery,
+    avatarColor: dbRecord.avatar_color,
+    avatarText: dbRecord.avatar_text,
+    verified: dbRecord.verified,
+    bestSeller: dbRecord.best_seller,
+    isStudio: dbRecord.is_studio,
+    bookedDates: dbRecord.booked_dates,
+    about: dbRecord.about,
+    bullets: dbRecord.bullets,
+    packages: dbRecord.packages,
+    languages: dbRecord.languages,
+    travelOutsideCity: dbRecord.travel_outside_city,
+    age: dbRecord.age,
+    chargePerHour: dbRecord.charge_per_hour
+  };
+};
+
+const mapFrontendToDbPhotographer = (fRecord) => {
+  return {
+    name: fRecord.name,
+    rating: fRecord.rating,
+    reviews: fRecord.reviews,
+    experience: fRecord.experience,
+    price: fRecord.price,
+    location: fRecord.location,
+    city: fRecord.city,
+    categories: fRecord.categories,
+    image: fRecord.image,
+    gallery: fRecord.gallery,
+    avatar_color: fRecord.avatarColor,
+    avatar_text: fRecord.avatarText,
+    verified: fRecord.verified,
+    best_seller: fRecord.bestSeller,
+    is_studio: fRecord.isStudio,
+    booked_dates: fRecord.bookedDates,
+    about: fRecord.about,
+    bullets: fRecord.bullets,
+    packages: fRecord.packages,
+    languages: fRecord.languages,
+    travel_outside_city: fRecord.travelOutsideCity,
+    age: fRecord.age,
+    charge_per_hour: fRecord.chargePerHour
+  };
+};
+
+const mapDbLead = (dbRecord) => {
+  return {
+    photographerId: dbRecord.photographer_id,
+    photographerName: dbRecord.photographer_name,
+    clientName: dbRecord.client_name,
+    clientPhone: dbRecord.client_phone,
+    eventDate: dbRecord.event_date,
+    eventType: dbRecord.event_type,
+    message: dbRecord.message,
+    timestamp: dbRecord.created_at
+  };
+};
 
 export default function Dashboard() {
   const { login, logout } = useAuth();
@@ -12,21 +83,64 @@ export default function Dashboard() {
   const [photographer, setPhotographer] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const loadLeads = () => {
-    const storedLeads = localStorage.getItem('pickmyshoot_leads');
-    setLeads(storedLeads ? JSON.parse(storedLeads) : []);
+  const loadLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error("Error loading leads from Supabase:", error);
+      } else if (data) {
+        setLeads(data.map(mapDbLead));
+      }
+    } catch (err) {
+      console.error("Error connecting to Supabase leads:", err);
+    }
+  };
+
+  const loadPhotographer = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('photographers')
+        .select('*')
+        .eq('id', 'the-wedding-story')
+        .single();
+      
+      if (error) {
+        console.error("Error loading photographer profile from Supabase:", error);
+      } else if (data) {
+        setPhotographer(mapDbPhotographer(data));
+      }
+    } catch (err) {
+      console.error("Error connecting to Supabase photographer:", err);
+    }
   };
 
   useEffect(() => {
     loadLeads();
-    const p = PHOTOGRAPHERS.find(p => p.id === 'the-wedding-story');
-    setPhotographer(p);
+    loadPhotographer();
   }, []);
 
-  const handleClearLeads = () => {
-    if (window.confirm("Are you sure you want to clear all simulation leads?")) {
-      localStorage.removeItem('pickmyshoot_leads');
-      setLeads([]);
+  const handleClearLeads = async () => {
+    if (window.confirm("Are you sure you want to clear all simulation leads from Supabase?")) {
+      try {
+        const { error } = await supabase
+          .from('leads')
+          .delete()
+          .neq('id', '00000000-0000-0000-0000-000000000000');
+        
+        if (error) {
+          console.error("Error clearing leads from Supabase:", error);
+          alert("Failed to clear leads: " + error.message);
+        } else {
+          setLeads([]);
+          alert("Simulation leads cleared successfully from Supabase!");
+        }
+      } catch (err) {
+        console.error("Clear leads connection failed:", err);
+      }
     }
   };
 
@@ -403,9 +517,25 @@ export default function Dashboard() {
           isOpen={isEditModalOpen} 
           onClose={() => setIsEditModalOpen(false)} 
           photographer={photographer}
-          onSave={(updated) => {
-            updatePhotographer(updated);
-            setPhotographer({ ...updated });
+          onSave={async (updated) => {
+            try {
+              const dbPayload = mapFrontendToDbPhotographer(updated);
+              const { error } = await supabase
+                .from('photographers')
+                .update(dbPayload)
+                .eq('id', photographer.id);
+              
+              if (error) {
+                console.error("Error updating photographer profile on Supabase:", error);
+                alert("Failed to update profile: " + error.message);
+              } else {
+                setPhotographer({ ...updated });
+                setIsEditModalOpen(false);
+                alert("Profile details updated successfully on Supabase database!");
+              }
+            } catch (err) {
+              console.error("Profile save connection failed:", err);
+            }
           }}
         />
       )}

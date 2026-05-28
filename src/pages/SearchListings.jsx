@@ -1,9 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { PHOTOGRAPHERS } from '../data/database';
+import { supabase } from '../context/supabase';
 import CustomCalendar from '../components/CustomCalendar';
 import '../css/main.css';
 import '../css/search.css';
+
+// Helper to map Supabase database fields (snake_case) to Frontend properties (camelCase)
+const mapDbPhotographer = (dbRecord) => {
+  return {
+    id: dbRecord.id,
+    name: dbRecord.name,
+    rating: Number(dbRecord.rating),
+    reviews: Number(dbRecord.reviews),
+    experience: Number(dbRecord.experience),
+    price: Number(dbRecord.price),
+    location: dbRecord.location,
+    city: dbRecord.city,
+    categories: dbRecord.categories,
+    image: dbRecord.image,
+    gallery: dbRecord.gallery,
+    avatarColor: dbRecord.avatar_color,
+    avatarText: dbRecord.avatar_text,
+    verified: dbRecord.verified,
+    bestSeller: dbRecord.best_seller,
+    isStudio: dbRecord.is_studio,
+    bookedDates: dbRecord.booked_dates,
+    about: dbRecord.about,
+    bullets: dbRecord.bullets,
+    packages: dbRecord.packages,
+    languages: dbRecord.languages,
+    travelOutsideCity: dbRecord.travel_outside_city,
+    age: dbRecord.age,
+    chargePerHour: dbRecord.charge_per_hour
+  };
+};
 
 export default function SearchListings() {
   const location = useLocation();
@@ -24,6 +54,10 @@ export default function SearchListings() {
   const [sortKey, setSortKey] = useState('popular');
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Supabase states
+  const [photographers, setPhotographers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   // Favorites storage
   const [favorites, setFavorites] = useState([]);
 
@@ -81,6 +115,28 @@ export default function SearchListings() {
     const storedFavs = localStorage.getItem('pickmyshoot_favorites');
     setFavorites(storedFavs ? JSON.parse(storedFavs) : []);
   }, [location.search]);
+
+  // Load photographers from Supabase
+  useEffect(() => {
+    async function loadPhotographers() {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('photographers')
+          .select('*');
+        if (error) {
+          console.error("Error loading photographers from Supabase:", error);
+        } else if (data) {
+          setPhotographers(data.map(mapDbPhotographer));
+        }
+      } catch (err) {
+        console.error("Error connecting to Supabase database:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPhotographers();
+  }, []);
 
   // Handle location checkboxes toggles
   const handleLocationToggle = (loc) => {
@@ -170,7 +226,7 @@ export default function SearchListings() {
   };
 
   // Computed filtering
-  const filteredPhotographers = PHOTOGRAPHERS.filter(p => {
+  const filteredPhotographers = photographers.filter(p => {
     // 1. Wishlist filter
     if (onlyWishlist && !favorites.includes(p.id)) return false;
     
@@ -694,7 +750,13 @@ export default function SearchListings() {
           <main className={isPackagesMode ? 'packages-main' : ''}>
             {/* Grid list of photographers */}
             <div className="photographers-grid" id="photographers-grid-list">
-              {sortedPhotographers.map((p) => {
+              {loading ? (
+                <div className="empty-state" style={{ gridColumn: 'span 3', padding: '40px 0' }}>
+                  <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '40px', color: 'var(--primary)', marginBottom: '16px' }}></i>
+                  <h3>Loading Photographers...</h3>
+                  <p>Fetching real-time availability from Supabase.</p>
+                </div>
+              ) : sortedPhotographers.map((p) => {
                 const isFav = favorites.includes(p.id);
                 return (
                   <div key={p.id} className="photographer-card" data-id={p.id}>
@@ -779,7 +841,7 @@ export default function SearchListings() {
                 );
               })}
 
-              {sortedPhotographers.length === 0 && (
+              {!loading && sortedPhotographers.length === 0 && (
                 <div className="empty-state" style={{ gridColumn: 'span 3' }}>
                   <i className="fa-solid fa-camera-retro"></i>
                   <h3>No Listings Found</h3>

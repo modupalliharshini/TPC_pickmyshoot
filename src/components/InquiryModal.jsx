@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../context/supabase';
 
 export default function InquiryModal({ isOpen, onClose, photographer }) {
   if (!isOpen || !photographer) return null;
@@ -11,39 +12,45 @@ export default function InquiryModal({ isOpen, onClose, photographer }) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
-    setTimeout(() => {
-      // Create new lead item
-      const leads = JSON.parse(localStorage.getItem('pickmyshoot_leads') || '[]');
-      leads.push({
-        photographerId: photographer.id,
-        photographerName: photographer.name,
-        clientName: name,
-        clientPhone: phone,
-        eventDate: date,
-        eventType: category,
-        message: message,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem('pickmyshoot_leads', JSON.stringify(leads));
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .insert([{
+          photographer_id: photographer.id,
+          photographer_name: photographer.name,
+          client_name: name,
+          client_phone: phone,
+          event_date: date,
+          event_type: category,
+          message: message
+        }]);
 
+      if (error) {
+        console.error("Error inserting lead:", error);
+        alert("Failed to submit inquiry: " + error.message);
+      } else {
+        setSuccess(true);
+        setTimeout(() => {
+          // Reset and close
+          setName('');
+          setPhone('');
+          setDate('');
+          setCategory('Wedding Photography');
+          setMessage('');
+          setSuccess(false);
+          onClose();
+        }, 1500);
+      }
+    } catch (err) {
+      console.error("Submission failed:", err);
+      alert("Submission failed. Please check network connection.");
+    } finally {
       setSubmitting(false);
-      setSuccess(true);
-
-      setTimeout(() => {
-        // Reset and close
-        setName('');
-        setPhone('');
-        setDate('');
-        setCategory('Wedding Photography');
-        setMessage('');
-        setSuccess(false);
-        onClose();
-      }, 1500);
-    }, 1000);
+    }
   };
 
   return (

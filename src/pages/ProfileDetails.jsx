@@ -1,18 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { PHOTOGRAPHERS } from '../data/database';
+import { supabase } from '../context/supabase';
 import InquiryModal from '../components/InquiryModal';
 import WhatsAppChat from '../components/WhatsAppChat';
 import '../css/main.css';
 import '../css/profile.css';
+
+// Helper to map Supabase database fields (snake_case) to Frontend properties (camelCase)
+const mapDbPhotographer = (dbRecord) => {
+  return {
+    id: dbRecord.id,
+    name: dbRecord.name,
+    rating: Number(dbRecord.rating),
+    reviews: Number(dbRecord.reviews),
+    experience: Number(dbRecord.experience),
+    price: Number(dbRecord.price),
+    location: dbRecord.location,
+    city: dbRecord.city,
+    categories: dbRecord.categories,
+    image: dbRecord.image,
+    gallery: dbRecord.gallery,
+    avatarColor: dbRecord.avatar_color,
+    avatarText: dbRecord.avatar_text,
+    verified: dbRecord.verified,
+    bestSeller: dbRecord.best_seller,
+    isStudio: dbRecord.is_studio,
+    bookedDates: dbRecord.booked_dates,
+    about: dbRecord.about,
+    bullets: dbRecord.bullets,
+    packages: dbRecord.packages,
+    languages: dbRecord.languages,
+    travelOutsideCity: dbRecord.travel_outside_city,
+    age: dbRecord.age,
+    chargePerHour: dbRecord.charge_per_hour
+  };
+};
 
 export default function ProfileDetails() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Find photographer from data
-  const photographer = PHOTOGRAPHERS.find(p => p.id === id) || PHOTOGRAPHERS[0];
+  // Supabase states
+  const [photographer, setPhotographer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Tab state
   const [activeTab, setActiveTab] = useState('about');
@@ -25,8 +56,37 @@ export default function ProfileDetails() {
   const [favorites, setFavorites] = useState([]);
   const [isSaved, setIsSaved] = useState(false);
 
+  // Fetch individual photographer profile by ID
+  useEffect(() => {
+    async function loadPhotographer() {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('photographers')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (error) {
+          console.error("Error fetching photographer profile details:", error);
+        } else if (data) {
+          setPhotographer(mapDbPhotographer(data));
+        }
+      } catch (err) {
+        console.error("Error connecting to Supabase database:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (id) {
+      loadPhotographer();
+    }
+  }, [id]);
+
   // Sync tab query parameter & favorites
   useEffect(() => {
+    if (!photographer) return;
     let tabParam = searchParams.get('tab') || 'about';
     
     // Coerce portfolio back to about for individual photographers
@@ -42,6 +102,16 @@ export default function ProfileDetails() {
     setFavorites(favArray);
     setIsSaved(favArray.includes(photographer.id));
   }, [searchParams, photographer]);
+
+  if (loading || !photographer) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', gap: '16px' }}>
+        <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '48px', color: 'var(--primary)' }}></i>
+        <h3 style={{ fontWeight: 800 }}>Loading Profile Details...</h3>
+        <p style={{ color: 'var(--dark-500)' }}>Retrieving verified portfolio credentials from Supabase.</p>
+      </div>
+    );
+  }
 
   const handleTabClick = (tabName) => {
     setSearchParams({ tab: tabName });
