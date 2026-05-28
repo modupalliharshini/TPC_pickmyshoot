@@ -34,8 +34,9 @@
 }
 
 .hero-desc {
-  font-size: 20px;
-  color: var(--dark-500);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--dark-700);
   margin-bottom: 40px;
   max-width: 480px;
   line-height: 1.6;
@@ -380,7 +381,7 @@
 }
 
 .category-name {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--dark-900);
   margin-bottom: 4px;
@@ -388,8 +389,8 @@
 }
 
 .category-count {
-  font-size: 11px;
-  color: var(--dark-500);
+  font-size: 13px;
+  color: var(--dark-700);
   font-weight: 600;
 }
 
@@ -613,8 +614,9 @@
 }
 
 .step-desc {
-  font-size: 13px;
-  color: var(--dark-500);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dark-700);
   line-height: 1.6;
 }
 
@@ -709,20 +711,20 @@
 }
 
 .featured-name {
-  font-size: 16px;
+  font-size: 19px;
   font-weight: 800;
   color: var(--dark-900);
   line-height: 1.2;
 }
 
 .featured-rating {
-  font-size: 11px;
-  color: var(--dark-500);
-  font-weight: 600;
+  font-size: 13px;
+  color: var(--dark-700);
+  font-weight: 700;
 }
 
 .featured-desc {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--dark-700);
   line-height: 1.5;
   margin-bottom: 20px;
@@ -735,18 +737,18 @@
   justify-content: space-between;
   border-top: 1.5px dashed var(--light-200);
   padding-top: 16px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--dark-700);
 }
 
 .featured-price strong {
   color: var(--primary);
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .featured-location {
-  font-weight: 600;
-  color: var(--dark-500);
+  font-weight: 700;
+  color: var(--dark-700);
 }
 
 /* Why Choose Us Section */
@@ -796,8 +798,8 @@
 }
 
 .benefit-item p {
-  font-size: 13px;
-  color: var(--dark-500);
+  font-size: 15px;
+  color: var(--dark-700);
   line-height: 1.5;
 }
 

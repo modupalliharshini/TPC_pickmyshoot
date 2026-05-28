@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container footer-grid">
         <div>
           <div className="footer-logo" style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-            <img src="/assets/logo.png" alt="pickmyshoot Logo" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
           </div>
           <p className="footer-desc">Find the perfect verified photographers for weddings, pre-weddings, baby shoots and events in India.</p>
           <div style={{ display: 'flex', gap: '12px', fontSize: '18px', color: 'var(--dark-500)' }}>

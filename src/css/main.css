@@ -10,10 +10,10 @@
   --accent-whatsapp-hover: #1ebd54;
   --accent-whatsapp-light: #e8faf0;
 
-  --dark-900: #0f172a;
-  --dark-800: #1e293b;
-  --dark-700: #334155;
-  --dark-500: #64748b;
+  --dark-900: #020617; /* Darker Slate 950 */
+  --dark-800: #0f172a; /* Slate 900 */
+  --dark-700: #1e293b; /* Slate 800 */
+  --dark-500: #334155; /* Slate 700 */
   --light-300: #cbd5e1;
   --light-200: #e2e8f0;
   --light-100: #f1f5f9;
@@ -32,7 +32,7 @@
   --radius-round: 50%;
 
   /* Font Stack */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: 'Cormorant Garamond', Georgia, serif;
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -47,6 +47,8 @@
 
 body {
   font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 500;
   background-color: var(--light-50);
   color: var(--dark-800);
   line-height: 1.6;
@@ -97,8 +99,8 @@ a {
   justify-content: center;
   gap: 8px;
   font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 16px;
   padding: 12px 24px;
   border-radius: var(--radius-md);
   border: none;
@@ -161,8 +163,8 @@ a {
 
 /* Global Navbar */
 .navbar {
-  background-color: var(--white);
-  border-bottom: 1px solid var(--light-200);
+  background-color: var(--primary);
+  border-bottom: 1px solid var(--primary-hover);
   height: 115px;
   display: flex;
   align-items: center;
@@ -243,18 +245,19 @@ a {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background-color: var(--light-50);
-  border: 1px solid var(--light-200);
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 600;
+  color: var(--white);
   cursor: pointer;
   transition: var(--transition-fast);
 }
 
 .location-selector:hover {
-  border-color: var(--light-300);
-  background-color: var(--light-100);
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 .nav-links {
@@ -265,15 +268,15 @@ a {
 }
 
 .nav-links a {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--dark-700);
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .nav-links a:hover,
 .nav-links .active a {
-  color: var(--primary);
-  font-weight: 600;
+  color: var(--white);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 .nav-right {
@@ -286,14 +289,14 @@ a {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--dark-700);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 20px;
   transition: var(--transition-fast);
   padding: 8px;
 }
 
 .wishlist-btn:hover {
-  color: var(--primary);
+  color: var(--white);
 }
 
 /* User Account Widget */
@@ -316,6 +319,20 @@ a {
   justify-content: center;
   font-weight: 700;
   border: 2px solid var(--primary);
+}
+
+.navbar .user-avatar {
+  background-color: var(--white);
+  color: var(--primary);
+  border: 2px solid var(--white);
+}
+
+.navbar .mobile-menu-btn {
+  color: var(--white);
+}
+
+.navbar .mobile-menu-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .user-dropdown {
@@ -694,7 +711,14 @@ input[type="date"].form-input {
     display: block;
     width: 100%;
     padding: 10px 0;
-    font-size: 15px;
+    font-size: 18px;
+    color: var(--dark-800);
+  }
+
+  .nav-links a:hover,
+  .nav-links .active a {
+    color: var(--primary);
+    text-shadow: none;
   }
 
   .navbar-container {

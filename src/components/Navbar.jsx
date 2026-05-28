@@ -49,13 +49,8 @@ export default function Navbar() {
       <div className="container navbar-container">
         <div className="nav-left">
           <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-            <img src="/assets/logo.png" alt="pickmyshoot Logo" style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/assets/logo_white.png" alt="pickmyshoot Logo" style={{ height: '85px', width: 'auto', objectFit: 'contain' }} />
           </Link>
-          <div className="location-selector">
-            <i className="fa-solid fa-location-dot"></i>
-            <span>Hyderabad</span>
-            <i className="fa-solid fa-chevron-down" style={{ fontSize: '10px' }}></i>
-          </div>
         </div>
 
         <ul className={`nav-links ${mobileMenuOpen ? 'show' : ''}`}>
@@ -77,6 +72,11 @@ export default function Navbar() {
         </ul>
 
         <div className="nav-right" id="navbar-auth-section">
+          <div className="location-selector">
+            <i className="fa-solid fa-location-dot"></i>
+            <span>Hyderabad</span>
+            <i className="fa-solid fa-chevron-down" style={{ fontSize: '10px' }}></i>
+          </div>
           {currentUserRole ? (
             <>
               <button 
@@ -119,7 +119,7 @@ export default function Navbar() {
               </div>
             </>
           ) : (
-            <button className="btn btn-primary" onClick={() => navigate('/login')}>
+            <button className="btn btn-secondary" onClick={() => navigate('/login')}>
               Login / Sign Up
             </button>
           )}

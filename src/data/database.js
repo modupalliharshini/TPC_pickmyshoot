@@ -1,5 +1,5 @@
 // Mock Database of Photographers
-export const PHOTOGRAPHERS = [
+const initialPhotographers = [
   {
     id: "the-wedding-story",
     name: "The Wedding Story",
@@ -233,3 +233,37 @@ export const PHOTOGRAPHERS = [
     travelOutsideCity: true
   }
 ];
+
+// Initialize and sync with localStorage
+const getStoredPhotographers = () => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('pickmyshoot_photographers');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error("Failed to parse stored photographers", e);
+      }
+    }
+  }
+  return null;
+};
+
+const storedList = getStoredPhotographers();
+export const PHOTOGRAPHERS = storedList || initialPhotographers;
+
+if (typeof window !== 'undefined' && !storedList) {
+  localStorage.setItem('pickmyshoot_photographers', JSON.stringify(initialPhotographers));
+}
+
+export function updatePhotographer(updatedPhoto) {
+  const index = PHOTOGRAPHERS.findIndex(p => p.id === updatedPhoto.id);
+  if (index !== -1) {
+    PHOTOGRAPHERS[index] = { ...PHOTOGRAPHERS[index], ...updatedPhoto };
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pickmyshoot_photographers', JSON.stringify(PHOTOGRAPHERS));
+    }
+    return true;
+  }
+  return false;
+}

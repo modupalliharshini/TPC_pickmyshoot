@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { PHOTOGRAPHERS, updatePhotographer } from '../data/database';
+import EditProfileModal from '../components/EditProfileModal';
 import '../css/main.css';
 
 export default function Dashboard() {
   const { login, logout } = useAuth();
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
-
-  useEffect(() => {
-    loadLeads();
-  }, []);
+  const [photographer, setPhotographer] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const loadLeads = () => {
     const storedLeads = localStorage.getItem('pickmyshoot_leads');
     setLeads(storedLeads ? JSON.parse(storedLeads) : []);
   };
+
+  useEffect(() => {
+    loadLeads();
+    const p = PHOTOGRAPHERS.find(p => p.id === 'the-wedding-story');
+    setPhotographer(p);
+  }, []);
 
   const handleClearLeads = () => {
     if (window.confirm("Are you sure you want to clear all simulation leads?")) {
@@ -373,18 +379,36 @@ export default function Dashboard() {
             </div>
             
             <div className="profile-teaser-info">
-              <div className="teaser-avatar" id="teaser-logo">TWS</div>
-              <h4 className="teaser-name" id="teaser-studio-name">The Wedding Story</h4>
-              <p className="teaser-location" id="teaser-studio-loc"><i className="fa-solid fa-location-dot"></i> Banjara Hills, Hyderabad</p>
-              <p className="teaser-desc" id="teaser-studio-desc">We are a team of passionate photographers who believe in capturing real emotions and candid moments. We specialize in wedding, pre-wedding and cinematic films.</p>
+              <div className="teaser-avatar" id="teaser-logo" style={{ backgroundColor: photographer?.avatarColor || '#000000' }}>
+                {photographer?.avatarText || 'TWS'}
+              </div>
+              <h4 className="teaser-name" id="teaser-studio-name">{photographer?.name || 'The Wedding Story'}</h4>
+              <p className="teaser-location" id="teaser-studio-loc">
+                <i className="fa-solid fa-location-dot"></i> {photographer?.location || 'Banjara Hills'}, {photographer?.city || 'Hyderabad'}
+              </p>
+              <p className="teaser-desc" id="teaser-studio-desc">
+                {photographer?.about || 'We are a team of passionate photographers who believe in capturing real emotions and candid moments.'}
+              </p>
               
-              <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => alert('Photographer profile editing is currently under development.')}>
+              <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setIsEditModalOpen(true)}>
                 Edit Catalog Profile
               </button>
             </div>
           </div>
         </div>
       </section>
+
+      {photographer && (
+        <EditProfileModal 
+          isOpen={isEditModalOpen} 
+          onClose={() => setIsEditModalOpen(false)} 
+          photographer={photographer}
+          onSave={(updated) => {
+            updatePhotographer(updated);
+            setPhotographer({ ...updated });
+          }}
+        />
+      )}
     </div>
   );
 }
