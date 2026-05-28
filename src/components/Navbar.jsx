@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-  const { currentUserRole, logout } = useAuth();
+  const { currentUserRole, currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,8 +41,13 @@ export default function Navbar() {
   const isPackagesActive = isSearchActive && getQueryParam('packages') === 'true';
   const isBlogActive = location.pathname === '/blogs';
 
-  const userInitials = currentUserRole === 'user' ? 'U' : 'P';
-  const userTitle = currentUserRole === 'user' ? 'Customer User' : 'Photographer';
+  const userInitials = currentUser && currentUser.name 
+    ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : (currentUserRole === 'user' ? 'U' : 'P');
+    
+  const userTitle = currentUser && currentUser.name 
+    ? currentUser.name 
+    : (currentUserRole === 'user' ? 'Customer User' : 'Photographer');
 
   return (
     <nav className="navbar">

@@ -5,13 +5,17 @@ import '../css/main.css';
 import '../css/login.css';
 
 export default function Login() {
-  const { currentUserRole, login } = useAuth();
+  const { currentUserRole, login, signUp } = useAuth();
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -27,6 +31,8 @@ export default function Login() {
   const selectRole = (role) => {
     setSelectedRole(role);
     setShowForm(true);
+    setErrorMsg(null);
+    setIsSignUpMode(false);
 
     if (role === 'user') {
       setEmail('customer@pickmyshoot.com');
@@ -37,12 +43,35 @@ export default function Login() {
     }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (!selectedRole) return;
-    
-    login(selectedRole);
-    // Redirect will be handled by the useEffect above
+    setErrorMsg(null);
+    setLoading(true);
+
+    try {
+      if (isSignUpMode) {
+        if (!fullName.trim()) {
+          setErrorMsg("Please enter your full name.");
+          setLoading(false);
+          return;
+        }
+        const res = await signUp(fullName, email, password, selectedRole);
+        if (!res.success) {
+          setErrorMsg(res.message);
+        }
+      } else {
+        const res = await login(email, password);
+        if (!res.success) {
+          setErrorMsg(res.message);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("An error occurred during authentication.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,9 +120,73 @@ export default function Login() {
         {/* Login Form (Fades and slides in when a role is selected) */}
         <div className={`login-form-wrapper ${showForm ? 'show' : ''}`} id="login-form-wrapper">
           <h3 id="form-heading" style={{ fontSize: '20px', marginBottom: '20px', fontWeight: 700 }}>
-            {selectedRole === 'user' ? 'Login as Customer User' : 'Login as Professional Photographer'}
+            {isSignUpMode 
+              ? (selectedRole === 'user' ? 'Register Customer Account' : 'Register Professional Studio')
+              : (selectedRole === 'user' ? 'Login as Customer User' : 'Login as Professional Photographer')
+            }
           </h3>
+
+          {/* Dynamic Error Alerts */}
+          {errorMsg && (
+            <div style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.15)', 
+              borderLeft: '4px solid #fff', 
+              padding: '12px 16px', 
+              borderRadius: '6px', 
+              marginBottom: '20px', 
+              fontSize: '13px',
+              color: '#fff',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              <span style={{ fontWeight: 600 }}>⚠️ {errorMsg}</span>
+              {errorMsg.includes("Account not found") && (
+                <button 
+                  type="button" 
+                  style={{ 
+                    background: '#ffffff', 
+                    color: 'var(--primary)', 
+                    border: 'none', 
+                    padding: '6px 12px', 
+                    borderRadius: '4px', 
+                    fontSize: '12px', 
+                    fontWeight: 700, 
+                    cursor: 'pointer',
+                    alignSelf: 'flex-start',
+                    boxShadow: 'var(--shadow-sm)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onClick={() => {
+                    setIsSignUpMode(true);
+                    setErrorMsg(null);
+                    setFullName('');
+                  }}
+                >
+                  Create Account Now
+                </button>
+              )}
+            </div>
+          )}
+
           <form id="login-form" onSubmit={handleLoginSubmit}>
+            {/* Dynamic Full Name Input */}
+            {isSignUpMode && (
+              <div className="form-group">
+                <label className="form-label" htmlFor="fullName">Full Name / Brand Name</label>
+                <input 
+                  className="form-input" 
+                  type="text" 
+                  id="fullName" 
+                  required 
+                  placeholder="e.g., Harish Kumar"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+            )}
+
+            {/* Email Field */}
             <div className="form-group">
               <label className="form-label" htmlFor="email">Email Address</label>
               <input 
@@ -107,6 +200,7 @@ export default function Login() {
               />
             </div>
             
+            {/* Password Field */}
             <div className="form-group">
               <label className="form-label" htmlFor="password">Password</label>
               <input 
@@ -120,9 +214,46 @@ export default function Login() {
               />
             </div>
             
-            <button type="submit" className="btn btn-secondary form-submit-btn">
-              Log In <i className="fa-solid fa-arrow-right"></i>
+            <button type="submit" className="btn btn-secondary form-submit-btn" disabled={loading} style={{ width: '100%' }}>
+              {loading ? (
+                <><i className="fa-solid fa-circle-notch fa-spin"></i> Processing...</>
+              ) : (
+                isSignUpMode ? 'Register & Sign In' : 'Log In'
+              )}
+              {!loading && <i className="fa-solid fa-arrow-right" style={{ marginLeft: '8px' }}></i>}
             </button>
+
+            {/* Mode Switch Toggle */}
+            <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
+              {isSignUpMode ? (
+                <span>
+                  Already have an account?{' '}
+                  <span 
+                    style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
+                    onClick={() => {
+                      setIsSignUpMode(false);
+                      setErrorMsg(null);
+                    }}
+                  >
+                    Log In here
+                  </span>
+                </span>
+              ) : (
+                <span>
+                  Don't have an account?{' '}
+                  <span 
+                    style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
+                    onClick={() => {
+                      setIsSignUpMode(true);
+                      setErrorMsg(null);
+                      setFullName('');
+                    }}
+                  >
+                    Sign Up here
+                  </span>
+                </span>
+              )}
+            </div>
           </form>
         </div>
       </div>
