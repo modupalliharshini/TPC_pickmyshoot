@@ -6,8 +6,6 @@ dist/
 dist-ssr/
 
 # environment files
-.env
-.env.local
 
 # logs
 *.log
