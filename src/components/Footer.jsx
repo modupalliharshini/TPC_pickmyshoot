@@ -18,21 +18,17 @@ export default function Footer() {
           </div>
         </div>
         <div>
-          <h4 className="footer-title">For Customers</h4>
-          <ul className="footer-links">
-            <li><Link to="/search">Search Photographers</Link></li>
+          <ul className="footer-links" style={{ marginTop: '38px' }}>
+            <li><Link to="/search?individuals=true">Search Photographers</Link></li>
             <li><Link to="/search?packages=true">Photography Packages</Link></li>
             <li><Link to="/search?studios=true">Premium Studios</Link></li>
-            <li><a href="#">FAQ & Support</a></li>
           </ul>
         </div>
         <div>
-          <h4 className="footer-title">For Photographers</h4>
-          <ul className="footer-links">
-            <li><Link to="/login">Join pickmyshoot</Link></li>
-            <li><Link to="/dashboard">Photographer Dashboard</Link></li>
-            <li><a href="#">Advertising</a></li>
-            <li><a href="#">Terms of Service</a></li>
+          <ul className="footer-links" style={{ marginTop: '38px' }}>
+            <li><Link to="/coming-soon">Advertising</Link></li>
+            <li><Link to="/terms-conditions">Terms of Service</Link></li>
+            <li><Link to="/faq">FAQ & Support</Link></li>
           </ul>
         </div>
         <div>
@@ -44,12 +40,12 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      
+
       <div className="container footer-bottom">
-        <div>&copy; 2026 pickmyshoot. All rights reserved. Built with love in Hyderabad.</div>
+        <div>&copy; 2026 Pick My Shoot. All rights reserved. Powered by <a href="https://thepatternscompany.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'inherit' }}>Patterns Infotech Pvt Ltd.</a></div>
         <div style={{ display: 'flex', gap: '20px' }}>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms & Conditions</a>
+          <Link to="/privacy-policy">Privacy Policy</Link>
+          <Link to="/terms-conditions">Terms & Conditions</Link>
         </div>
       </div>
     </footer>

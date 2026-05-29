@@ -9,6 +9,10 @@ import ProfileDetails from './pages/ProfileDetails';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Blog from './pages/Blog';
+import FAQ from './pages/FAQ';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import ComingSoon from './pages/ComingSoon';
 
 // Protected Route for authenticated users
 function ProtectedRoute({ children }) {
@@ -112,6 +116,34 @@ export default function App() {
                 <Blog />
               </MainLayout>
             </ProtectedRoute>
+          } />
+
+          {/* FAQ Route */}
+          <Route path="/faq" element={
+            <MainLayout>
+              <FAQ />
+            </MainLayout>
+          } />
+
+          {/* Privacy Policy Route */}
+          <Route path="/privacy-policy" element={
+            <MainLayout>
+              <PrivacyPolicy />
+            </MainLayout>
+          } />
+
+          {/* Terms & Conditions Route */}
+          <Route path="/terms-conditions" element={
+            <MainLayout>
+              <TermsConditions />
+            </MainLayout>
+          } />
+
+          {/* Coming Soon Route */}
+          <Route path="/coming-soon" element={
+            <MainLayout>
+              <ComingSoon />
+            </MainLayout>
           } />
 
           {/* Fallback routing */}
