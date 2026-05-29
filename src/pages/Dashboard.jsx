@@ -431,7 +431,9 @@ export default function Dashboard() {
           <div className="stat-card">
             <div className="stat-icon" style={{ backgroundColor: '#e8faf0', color: '#25d366' }}><i className="fa-solid fa-eye"></i></div>
             <div className="stat-info">
-              <span className="stat-value">1,420</span>
+              <span className="stat-value">
+                {photographer ? Math.round((photographer.reviews * 5.4) + 24).toLocaleString('en-IN') : '0'}
+              </span>
               <span className="stat-label">Profile Views</span>
             </div>
           </div>
@@ -440,7 +442,9 @@ export default function Dashboard() {
           <div className="stat-card">
             <div className="stat-icon" style={{ backgroundColor: '#fffbeb', color: '#ffb400' }}><i className="fa-solid fa-star"></i></div>
             <div className="stat-info">
-              <span className="stat-value">4.9</span>
+              <span className="stat-value">
+                {photographer ? photographer.rating.toFixed(1) : '0.0'}
+              </span>
               <span className="stat-label">Average Rating</span>
             </div>
           </div>
@@ -449,7 +453,9 @@ export default function Dashboard() {
           <div className="stat-card">
             <div className="stat-icon" style={{ backgroundColor: '#f0f7ff', color: '#2196f3' }}><i className="fa-solid fa-calendar-days"></i></div>
             <div className="stat-info">
-              <span className="stat-value">18</span>
+              <span className="stat-value">
+                {photographer?.bookedDates ? photographer.bookedDates.length : 0}
+              </span>
               <span className="stat-label">Active Bookings</span>
             </div>
           </div>
