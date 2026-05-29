@@ -227,10 +227,100 @@ const makeMockSupabase = () => {
     return { data, error };
   };
 
+  const auth = {
+    async signInWithPassword({ email, password }) {
+      // Fetch latest profiles
+      let profiles = getLocalData('pickmyshoot_profiles', defaultProfiles);
+      
+      // Support legacy role-only login signatures mapping (mirroring AuthContext)
+      let targetEmail = email;
+      let targetPass = password;
+      if (email === 'user') {
+        targetEmail = 'customer@pickmyshoot.com';
+        targetPass = 'password123';
+      } else if (email === 'photographer') {
+        targetEmail = 'photographer@pickmyshoot.com';
+        targetPass = 'password123';
+      }
+
+      const userProfile = profiles.find(
+        u => u.email.toLowerCase() === targetEmail.toLowerCase() && u.password === targetPass
+      );
+
+      if (userProfile) {
+        return {
+          data: {
+            user: {
+              id: userProfile.id,
+              email: userProfile.email,
+              user_metadata: {
+                name: userProfile.name,
+                role: userProfile.role
+              }
+            },
+            session: { access_token: 'mock-session-token' }
+          },
+          error: null
+        };
+      } else {
+        return {
+          data: { user: null, session: null },
+          error: { message: 'Invalid credentials. Note: Default login email is customer@pickmyshoot.com or photographer@pickmyshoot.com with password123.' }
+        };
+      }
+    },
+
+    async signUp({ email, password, options = {} }) {
+      let profiles = getLocalData('pickmyshoot_profiles', defaultProfiles);
+      if (profiles.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        return {
+          data: { user: null, session: null },
+          error: { message: 'User with this email already exists' }
+        };
+      }
+
+      const role = options.data?.role || 'user';
+      const name = options.data?.name || email.split('@')[0];
+      const newUserId = `mock-user-${Math.floor(Math.random() * 1000000)}`;
+
+      // Save to mock database
+      const newProfile = {
+        id: newUserId,
+        name,
+        email,
+        password,
+        role
+      };
+      profiles.push(newProfile);
+      setLocalData('pickmyshoot_profiles', profiles);
+
+      return {
+        data: {
+          user: {
+            id: newUserId,
+            email,
+            email_confirmed_at: new Date().toISOString(),
+            user_metadata: {
+              name,
+              role
+            }
+          },
+          session: { access_token: 'mock-session-token' }
+        },
+        error: null
+      };
+    },
+
+    async signOut() {
+      return { error: null };
+    }
+  };
+
   return {
     from(tableName) {
       return queryBuilder(tableName);
-    }
+    },
+    auth
   };
 };
 
